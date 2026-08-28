@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { LandingPage } from './pages/LandingPage';
@@ -26,16 +26,7 @@ const ProtectedLayout: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0">
         <Header />
         <main className="flex-1 p-8 overflow-y-auto bg-slate-50/50 dark:bg-[#020617]">
-          <Routes>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/clients" element={<ClientsPage />} />
-            <Route path="/nutritionists" element={<NutritionistsPage />} />
-            <Route path="/arts" element={<ArtsPage />} />
-            <Route path="/visits" element={<VisitsPage />} />
-            <Route path="/non-conformities" element={<NonConformitiesPage />} />
-            <Route path="/checklists" element={<ChecklistsPage />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+          <Outlet />
         </main>
       </div>
     </div>
@@ -47,9 +38,25 @@ export const App: React.FC = () => {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public Landing & Auth Routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/home" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/*" element={<ProtectedLayout />} />
+
+          {/* Protected Application Routes */}
+          <Route element={<ProtectedLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/nutritionists" element={<NutritionistsPage />} />
+            <Route path="/arts" element={<ArtsPage />} />
+            <Route path="/visits" element={<VisitsPage />} />
+            <Route path="/non-conformities" element={<NonConformitiesPage />} />
+            <Route path="/checklists" element={<ChecklistsPage />} />
+          </Route>
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
