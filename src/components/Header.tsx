@@ -1,12 +1,33 @@
-import React from 'react';
-import { User, Building2, Sun, Moon } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, Building2, Sun, Moon, Download, ShieldCheck } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import api from '../services/api';
 
 export const Header: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
+  const [isExporting, setIsExporting] = useState(false);
   const user = JSON.parse(localStorage.getItem('praxis_user') || '{}');
   const tenant = JSON.parse(localStorage.getItem('praxis_tenant') || '{}');
   const displayName = (!user.name || user.name.includes('Mariana Silva')) ? 'Dra. Jamily Pinto' : user.name;
+
+  const handleExportData = async () => {
+    try {
+      setIsExporting(true);
+      const { data } = await api.get('/auth/export-data');
+      const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`;
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', jsonString);
+      downloadAnchor.setAttribute('download', `praxis_dados_lgpd_${user.name ? user.name.replace(/\s+/g, '_') : 'usuario'}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    } catch (error) {
+      console.error('Erro ao exportar dados LGPD:', error);
+      alert('Não foi possível exportar os dados no momento.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <header className="h-16 bg-white dark:bg-[#0F172A] border-b border-[#CBD5E1] dark:border-[#334155] px-8 flex items-center justify-between sticky top-0 z-10 transition-colors duration-200">
@@ -17,7 +38,18 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        {/* LGPD Portability Button */}
+        <button
+          onClick={handleExportData}
+          disabled={isExporting}
+          title="Exportar Meus Dados Pessoais (LGPD Art. 18)"
+          className="p-2 rounded-md bg-slate-100 dark:bg-[#1E293B] text-[#475569] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] border border-[#CBD5E1] dark:border-[#334155] transition-all cursor-pointer flex items-center gap-1.5 text-xs font-medium"
+        >
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <span className="hidden md:inline">{isExporting ? 'Exportando...' : 'Dados LGPD'}</span>
+        </button>
+
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
