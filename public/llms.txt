@@ -1,0 +1,27 @@
+# PRAXIS — Gestão Inteligente para Consultorias Nutricionais
+
+> PRAXIS é uma plataforma SaaS B2B moderna de inteligência operacional e gestão para empresas de consultoria nutricional, assessoria em alimentação e nutricionistas Responsáveis Técnicos (RTs).
+
+## O que é o PRAXIS?
+O PRAXIS centraliza clientes, unidades, equipes de nutricionistas, Anotações de Responsabilidade Técnica (ARTs perante o CRN), checklists sanitários de Boas Práticas (RDC ANVISA 216/2004 e RDC 275), registro fotográfico de evidências e geração de laudos técnicos em PDF.
+
+## Principais Funcionalidades
+- **Gestão de Clientes e Unidades:** Cadastro e histórico centralizado de restaurantes, buffets, hospitais, cozinhas industriais e UANs atendidas.
+- **Controle de ARTs:** Monitoramento de vigência, emissões e renovações de Anotações de Responsabilidade Técnica junto ao Conselho Regional de Nutricionistas (CRN).
+- **Checklists Sanitários em Campo (RDC 216/2004):** Auditorias higiênico-sanitárias com registro de não conformidades e plano de ação imediato.
+- **Fotos e Evidências:** Anexação de fotos comprobatórias vinculadas a não conformidades e visitas técnicas.
+- **Relatórios Técnicos e Indicadores:** Geração automatizada de laudos periciais e relatórios em PDF com visual executivo.
+- **App Mobile Dedicado:** Execução ágil de visitas técnicas em cozinhas e áreas de manipulação.
+- **Conformidade com a LGPD (Lei nº 13.709/2018):** Criptografia de ponta a ponta, isolamento multi-tenant seguro e portabilidade de dados (Art. 18).
+
+## Para Quem É?
+- Empresas de consultoria e assessoria nutricional que gerenciam múltiplos clientes.
+- Nutricionistas Responsáveis Técnicos (RTs) autônomos.
+- Redes de restaurantes, hotéis e serviços de alimentação e bebidas.
+- Cozinhas industriais e Unidades de Alimentação e Nutrição (UANs).
+
+## Links Oficiais
+- [Página Principal](https://praxisnutri.com.br/)
+- [Acesso à Plataforma / Login](https://praxisnutri.com.br/login)
+- [Cadastro de Consultoria](https://praxisnutri.com.br/login?register=true)
+- [Documentação Completa para LLMs](https://praxisnutri.com.br/llms-full.txt)

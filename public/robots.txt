@@ -1,0 +1,56 @@
+# ==========================================================
+# PRAXIS — robots.txt
+# https://praxisnutri.com.br
+# ==========================================================
+
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /assets/
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /sitemap.xml
+
+# Proteger rotas privadas autenticadas da indexacao publica
+Disallow: /dashboard
+Disallow: /clients
+Disallow: /nutritionists
+Disallow: /arts
+Disallow: /visits
+Disallow: /non-conformities
+Disallow: /checklists
+
+# AI Crawlers & LLM Agents (Permitir descoberta e busca semantica)
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /llms.txt
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Sitemap
+Sitemap: https://praxisnutri.com.br/sitemap.xml
