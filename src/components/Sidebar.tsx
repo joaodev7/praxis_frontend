@@ -8,6 +8,7 @@ import {
   CalendarDays, 
   AlertTriangle, 
   ListChecks, 
+  CreditCard,
   LogOut
 } from 'lucide-react';
 
@@ -29,6 +30,7 @@ export const Sidebar: React.FC = () => {
     { label: 'Visitas Técnicas', path: '/visits', icon: CalendarDays },
     { label: 'Não Conformidades', path: '/non-conformities', icon: AlertTriangle },
     { label: 'Checklists (RDC 216)', path: '/checklists', icon: ListChecks },
+    { label: 'Assinatura & Planos', path: '/billing', icon: CreditCard },
   ];
 
   return (

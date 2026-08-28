@@ -11,6 +11,7 @@ import { ArtsPage } from './pages/ArtsPage';
 import { VisitsPage } from './pages/VisitsPage';
 import { NonConformitiesPage } from './pages/NonConformitiesPage';
 import { ChecklistsPage } from './pages/ChecklistsPage';
+import { BillingPage } from './pages/BillingPage';
 import { ThemeProvider } from './context/ThemeContext';
 
 const ProtectedLayout: React.FC = () => {
@@ -53,6 +54,7 @@ export const App: React.FC = () => {
             <Route path="/visits" element={<VisitsPage />} />
             <Route path="/non-conformities" element={<NonConformitiesPage />} />
             <Route path="/checklists" element={<ChecklistsPage />} />
+            <Route path="/billing" element={<BillingPage />} />
           </Route>
 
           {/* Fallback */}
