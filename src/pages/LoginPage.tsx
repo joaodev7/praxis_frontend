@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 import { Lock, Mail, Building2, LogIn, ArrowRight, ShieldCheck, FileText } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -7,7 +7,8 @@ import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 
 export const LoginPage: React.FC = () => {
-  const [isRegister, setIsRegister] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [isRegister, setIsRegister] = useState(searchParams.get('register') === 'true');
   const [email, setEmail] = useState('admin@nutrivida.com');
   const [password, setPassword] = useState('Praxis@123');
   const [tenantName, setTenantName] = useState('');
@@ -45,13 +46,13 @@ export const LoginPage: React.FC = () => {
         localStorage.setItem('praxis_token', data.token);
         localStorage.setItem('praxis_user', JSON.stringify(data.user));
         localStorage.setItem('praxis_tenant', JSON.stringify(data.tenant));
-        navigate('/');
+        navigate('/dashboard');
       } else {
         const { data } = await api.post('/auth/login', { email, password });
         localStorage.setItem('praxis_token', data.token);
         localStorage.setItem('praxis_user', JSON.stringify(data.user));
         localStorage.setItem('praxis_tenant', JSON.stringify(data.tenant));
-        navigate('/');
+        navigate('/dashboard');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Falha ao autenticar. Verifique suas credenciais.');

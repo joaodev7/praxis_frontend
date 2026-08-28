@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
-import { User, Building2, Sun, Moon, Download, ShieldCheck } from 'lucide-react';
+import { User, Building2, Sun, Moon, Download, ShieldCheck, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
 
 export const Header: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [isExporting, setIsExporting] = useState(false);
   const user = JSON.parse(localStorage.getItem('praxis_user') || '{}');
   const tenant = JSON.parse(localStorage.getItem('praxis_tenant') || '{}');
   const displayName = (!user.name || user.name.includes('Mariana Silva')) ? 'Dra. Jamily Pinto' : user.name;
+
+  const handleLogout = () => {
+    localStorage.removeItem('praxis_token');
+    localStorage.removeItem('praxis_user');
+    localStorage.removeItem('praxis_tenant');
+    navigate('/login');
+  };
 
   const handleExportData = async () => {
     try {
@@ -70,7 +79,7 @@ export const Header: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-3 border-l border-[#CBD5E1] dark:border-[#334155] pl-4">
-          <div className="text-right">
+          <div className="text-right hidden sm:block">
             <p className="text-sm font-bold text-[#0F172A] dark:text-[#F8FAFC] leading-none">{displayName}</p>
             <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-medium mt-0.5">
               {user.role === 'TenantAdmin' ? 'Administradora & RT' : user.role || 'Nutricionista RT'}
@@ -79,6 +88,16 @@ export const Header: React.FC = () => {
           <div className="w-9 h-9 rounded-full bg-[#EFF6FF] dark:bg-blue-500/15 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold border border-blue-200 dark:border-blue-500/30">
             <User className="w-5 h-5" />
           </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            title="Encerrar Sessão"
+            className="p-2 rounded-md text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/40 transition-all cursor-pointer flex items-center gap-1 text-xs font-semibold"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden md:inline">Sair</span>
+          </button>
         </div>
       </div>
     </header>

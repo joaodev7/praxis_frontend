@@ -22,7 +22,7 @@ export const Sidebar: React.FC = () => {
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'Clientes & Unidades', path: '/clients', icon: Building2 },
     { label: 'Nutricionistas RT', path: '/nutritionists', icon: Users },
     { label: 'ARTs & Registros', path: '/arts', icon: FileCheck2 },
