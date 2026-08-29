@@ -83,18 +83,19 @@ export const BillingPage: React.FC = () => {
   };
 
   const formatCpfCnpj = (val: string) => {
-    const digits = val.replace(/\D/g, '').substring(0, 14);
-    if (digits.length <= 11) {
-      return digits
+    // Retém letras e números para suporte total ao novo CNPJ alfanumérico da Receita Federal
+    const chars = val.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 14);
+    if (chars.length <= 11 && /^\d+$/.test(chars)) {
+      return chars
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
     }
-    return digits
-      .replace(/^(\d{2})(\d)/, '$1.$2')
-      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-      .replace(/\.(\d{3})(\d)/, '.$1/$2')
-      .replace(/(\d{4})(\d)/, '$1-$2');
+    return chars
+      .replace(/^([A-Z0-9]{2})([A-Z0-9])/, '$1.$2')
+      .replace(/^([A-Z0-9]{2})\.([A-Z0-9]{3})([A-Z0-9])/, '$1.$2.$3')
+      .replace(/\.([A-Z0-9]{3})([A-Z0-9])/, '.$1/$2')
+      .replace(/([A-Z0-9]{4})([A-Z0-9])/, '$1-$2');
   };
 
   const formatCep = (val: string) => {
@@ -124,7 +125,7 @@ export const BillingPage: React.FC = () => {
 
       if (paymentMethod === 2) {
         const cleanCard = cardData.number.replace(/\D/g, '');
-        const cleanCpfCnpj = cardData.cpfCnpj.replace(/\D/g, '');
+        const cleanCpfCnpj = cardData.cpfCnpj.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
         const cleanCvv = cardData.ccv.replace(/\D/g, '');
 
         if (!cleanCard || !cardData.holderName || !cardData.expiryMonth || !cardData.expiryYear || !cleanCvv || !cleanCpfCnpj) {
@@ -134,7 +135,7 @@ export const BillingPage: React.FC = () => {
         }
 
         if (cleanCpfCnpj.length !== 11 && cleanCpfCnpj.length !== 14) {
-          setCheckoutError('O CPF deve ter 11 dígitos ou o CNPJ deve ter 14 dígitos válidos.');
+          setCheckoutError('O CPF deve conter 11 dígitos ou o CNPJ deve conter 14 caracteres.');
           setProcessingCheckout(false);
           return;
         }
