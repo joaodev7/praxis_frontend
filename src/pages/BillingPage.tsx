@@ -77,6 +77,31 @@ export const BillingPage: React.FC = () => {
     }
   };
 
+  const formatCardNumber = (val: string) => {
+    const digits = val.replace(/\D/g, '').substring(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+  };
+
+  const formatCpfCnpj = (val: string) => {
+    const digits = val.replace(/\D/g, '').substring(0, 14);
+    if (digits.length <= 11) {
+      return digits
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    }
+    return digits
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  };
+
+  const formatCep = (val: string) => {
+    const digits = val.replace(/\D/g, '').substring(0, 8);
+    return digits.replace(/^(\d{5})(\d)/, '$1-$2');
+  };
+
   const handleOpenCheckout = (plan: Plan) => {
     setSelectedPlan(plan);
     setCheckoutResult(null);
@@ -98,27 +123,43 @@ export const BillingPage: React.FC = () => {
       };
 
       if (paymentMethod === 2) {
-        if (!cardData.number || !cardData.holderName || !cardData.expiryMonth || !cardData.expiryYear || !cardData.ccv || !cardData.cpfCnpj) {
+        const cleanCard = cardData.number.replace(/\D/g, '');
+        const cleanCpfCnpj = cardData.cpfCnpj.replace(/\D/g, '');
+        const cleanCvv = cardData.ccv.replace(/\D/g, '');
+
+        if (!cleanCard || !cardData.holderName || !cardData.expiryMonth || !cardData.expiryYear || !cleanCvv || !cleanCpfCnpj) {
           setCheckoutError('Por favor, preencha todos os campos obrigatórios do cartão.');
           setProcessingCheckout(false);
           return;
         }
 
+        if (cleanCpfCnpj.length !== 11 && cleanCpfCnpj.length !== 14) {
+          setCheckoutError('O CPF deve ter 11 dígitos ou o CNPJ deve ter 14 dígitos válidos.');
+          setProcessingCheckout(false);
+          return;
+        }
+
+        if (cleanCard.length < 13) {
+          setCheckoutError('Número de cartão de crédito inválido.');
+          setProcessingCheckout(false);
+          return;
+        }
+
         payload.creditCard = {
-          holderName: cardData.holderName,
-          number: cardData.number.replace(/\s+/g, ''),
-          expiryMonth: cardData.expiryMonth,
+          holderName: cardData.holderName.trim(),
+          number: cleanCard,
+          expiryMonth: cardData.expiryMonth.padStart(2, '0'),
           expiryYear: cardData.expiryYear.length === 2 ? `20${cardData.expiryYear}` : cardData.expiryYear,
-          ccv: cardData.ccv
+          ccv: cleanCvv
         };
 
         payload.creditCardHolderInfo = {
-          name: cardData.holderName,
-          email: '', // Backend handles from tenant
-          cpfCnpj: cardData.cpfCnpj.replace(/\D/g, ''),
+          name: cardData.holderName.trim(),
+          email: '', // Backend automatically falls back to tenant email
+          cpfCnpj: cleanCpfCnpj,
           postalCode: cardData.postalCode.replace(/\D/g, ''),
-          addressNumber: cardData.addressNumber,
-          phone: cardData.phone
+          addressNumber: cardData.addressNumber.trim(),
+          phone: cardData.phone.replace(/\D/g, '')
         };
       }
 
@@ -782,7 +823,7 @@ export const BillingPage: React.FC = () => {
                       placeholder="0000 0000 0000 0000"
                       maxLength={19}
                       value={cardData.number}
-                      onChange={(e) => setCardData({ ...cardData, number: e.target.value })}
+                      onChange={(e) => setCardData({ ...cardData, number: formatCardNumber(e.target.value) })}
                       className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
                     />
                   </div>
@@ -795,7 +836,7 @@ export const BillingPage: React.FC = () => {
                         placeholder="MM"
                         maxLength={2}
                         value={cardData.expiryMonth}
-                        onChange={(e) => setCardData({ ...cardData, expiryMonth: e.target.value })}
+                        onChange={(e) => setCardData({ ...cardData, expiryMonth: e.target.value.replace(/\D/g, '').substring(0, 2) })}
                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-center"
                       />
                     </div>
@@ -803,10 +844,10 @@ export const BillingPage: React.FC = () => {
                       <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Ano</label>
                       <input
                         type="text"
-                        placeholder="AA"
+                        placeholder="AAAA"
                         maxLength={4}
                         value={cardData.expiryYear}
-                        onChange={(e) => setCardData({ ...cardData, expiryYear: e.target.value })}
+                        onChange={(e) => setCardData({ ...cardData, expiryYear: e.target.value.replace(/\D/g, '').substring(0, 4) })}
                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-center"
                       />
                     </div>
@@ -817,7 +858,7 @@ export const BillingPage: React.FC = () => {
                         placeholder="123"
                         maxLength={4}
                         value={cardData.ccv}
-                        onChange={(e) => setCardData({ ...cardData, ccv: e.target.value })}
+                        onChange={(e) => setCardData({ ...cardData, ccv: e.target.value.replace(/\D/g, '').substring(0, 4) })}
                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-center"
                       />
                     </div>
@@ -830,8 +871,9 @@ export const BillingPage: React.FC = () => {
                     <input
                       type="text"
                       placeholder="000.000.000-00"
+                      maxLength={18}
                       value={cardData.cpfCnpj}
-                      onChange={(e) => setCardData({ ...cardData, cpfCnpj: e.target.value })}
+                      onChange={(e) => setCardData({ ...cardData, cpfCnpj: formatCpfCnpj(e.target.value) })}
                       className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
                     />
                   </div>
@@ -840,8 +882,9 @@ export const BillingPage: React.FC = () => {
                     <input
                       type="text"
                       placeholder="00000-000"
+                      maxLength={9}
                       value={cardData.postalCode}
-                      onChange={(e) => setCardData({ ...cardData, postalCode: e.target.value })}
+                      onChange={(e) => setCardData({ ...cardData, postalCode: formatCep(e.target.value) })}
                       className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
                     />
                   </div>
