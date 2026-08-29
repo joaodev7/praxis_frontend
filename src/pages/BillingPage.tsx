@@ -46,6 +46,7 @@ export const BillingPage: React.FC = () => {
     expiryYear: '',
     ccv: '',
     cpfCnpj: '',
+    email: '',
     postalCode: '',
     addressNumber: '',
     phone: ''
@@ -98,6 +99,18 @@ export const BillingPage: React.FC = () => {
       .replace(/([A-Z0-9]{4})([A-Z0-9])/, '$1-$2');
   };
 
+  const formatPhone = (val: string) => {
+    const digits = val.replace(/\D/g, '').substring(0, 11);
+    if (digits.length <= 10) {
+      return digits
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{4})(\d{1,4})$/, '$1-$2');
+    }
+    return digits
+      .replace(/^(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d{1,4})$/, '$1-$2');
+  };
+
   const formatCep = (val: string) => {
     const digits = val.replace(/\D/g, '').substring(0, 8);
     return digits.replace(/^(\d{5})(\d)/, '$1-$2');
@@ -127,6 +140,8 @@ export const BillingPage: React.FC = () => {
         const cleanCard = cardData.number.replace(/\D/g, '');
         const cleanCpfCnpj = cardData.cpfCnpj.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
         const cleanCvv = cardData.ccv.replace(/\D/g, '');
+        const cleanPhone = cardData.phone.replace(/\D/g, '');
+        const cleanPostalCode = cardData.postalCode.replace(/\D/g, '');
 
         if (!cleanCard || !cardData.holderName || !cardData.expiryMonth || !cardData.expiryYear || !cleanCvv || !cleanCpfCnpj) {
           setCheckoutError('Por favor, preencha todos os campos obrigatórios do cartão.');
@@ -136,6 +151,24 @@ export const BillingPage: React.FC = () => {
 
         if (cleanCpfCnpj.length !== 11 && cleanCpfCnpj.length !== 14) {
           setCheckoutError('O CPF deve conter 11 dígitos ou o CNPJ deve conter 14 caracteres.');
+          setProcessingCheckout(false);
+          return;
+        }
+
+        if (!cleanPhone || cleanPhone.length < 10) {
+          setCheckoutError('Informe o número de contato com DDD do titular do cartão (mínimo 10 dígitos).');
+          setProcessingCheckout(false);
+          return;
+        }
+
+        if (!cleanPostalCode || cleanPostalCode.length < 8) {
+          setCheckoutError('Informe o CEP de cobrança válido (8 dígitos).');
+          setProcessingCheckout(false);
+          return;
+        }
+
+        if (!cardData.addressNumber.trim()) {
+          setCheckoutError('Informe o número do endereço de cobrança.');
           setProcessingCheckout(false);
           return;
         }
@@ -156,11 +189,11 @@ export const BillingPage: React.FC = () => {
 
         payload.creditCardHolderInfo = {
           name: cardData.holderName.trim(),
-          email: '', // Backend automatically falls back to tenant email
+          email: cardData.email.trim(),
           cpfCnpj: cleanCpfCnpj,
-          postalCode: cardData.postalCode.replace(/\D/g, ''),
+          postalCode: cleanPostalCode,
           addressNumber: cardData.addressNumber.trim(),
-          phone: cardData.phone.replace(/\D/g, '')
+          phone: cleanPhone
         };
       }
 
@@ -879,7 +912,31 @@ export const BillingPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">CEP</label>
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Celular / Tel. com DDD</label>
+                    <input
+                      type="text"
+                      placeholder="(00) 00000-0000"
+                      maxLength={15}
+                      value={cardData.phone}
+                      onChange={(e) => setCardData({ ...cardData, phone: formatPhone(e.target.value) })}
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">E-mail do Titular</label>
+                    <input
+                      type="email"
+                      placeholder="email@empresa.com"
+                      value={cardData.email}
+                      onChange={(e) => setCardData({ ...cardData, email: e.target.value })}
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">CEP de Cobrança</label>
                     <input
                       type="text"
                       placeholder="00000-000"
@@ -890,10 +947,10 @@ export const BillingPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Número</label>
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Número do Endereço</label>
                     <input
                       type="text"
-                      placeholder="Nº endereço"
+                      placeholder="Nº endereço (ex: 123)"
                       value={cardData.addressNumber}
                       onChange={(e) => setCardData({ ...cardData, addressNumber: e.target.value })}
                       className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
