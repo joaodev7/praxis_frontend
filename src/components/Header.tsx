@@ -43,7 +43,7 @@ export const Header: React.FC = () => {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 text-sm font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
           <Building2 className="w-4 h-4 text-[#2563EB] dark:text-[#3B82F6]" />
-          <span>{tenant.name || 'NutriVida Assessoria Nutricional'}</span>
+          <span>{tenant.name || 'Minha Empresa'}</span>
         </div>
       </div>
 

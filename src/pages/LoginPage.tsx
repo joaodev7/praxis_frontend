@@ -9,8 +9,8 @@ import { Modal } from '../components/ui/Modal';
 export const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [isRegister, setIsRegister] = useState(searchParams.get('register') === 'true');
-  const [email, setEmail] = useState('admin@nutrivida.com');
-  const [password, setPassword] = useState('Praxis@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [tenantName, setTenantName] = useState('');
   const [cnpj, setCnpj] = useState('');
   const [adminName, setAdminName] = useState('');
@@ -97,7 +97,7 @@ export const LoginPage: React.FC = () => {
                   required
                   value={tenantName}
                   onChange={(e) => setTenantName(e.target.value)}
-                  placeholder="Ex: NutriVida Assessoria"
+                  placeholder="Ex: Consultoria Nutricional"
                   className="w-full bg-[#1E293B] border border-[#334155] text-white rounded-sm px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
@@ -219,12 +219,6 @@ export const LoginPage: React.FC = () => {
           >
             Privacidade & LGPD
           </button>
-        </div>
-
-        <div className="mt-3 text-center">
-          <p className="text-[10px] text-[#475569]">
-            Acesso demo inicial: <span className="text-[#64748B] font-mono">admin@nutrivida.com</span> / <span className="text-[#64748B] font-mono">Praxis@123</span>
-          </p>
         </div>
       </div>
 

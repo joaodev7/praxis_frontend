@@ -164,7 +164,7 @@ export const NutritionistsPage: React.FC = () => {
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="juliana.nutri@nutrivida.com"
+            placeholder="nutricionista@email.com"
           />
           <Input
             label="Senha Inicial"
