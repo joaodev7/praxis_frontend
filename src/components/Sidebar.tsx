@@ -39,7 +39,7 @@ export const Sidebar: React.FC = () => {
       <div className="p-5 border-b border-[#CBD5E1] dark:border-[#334155] bg-white dark:bg-[#0F172A]">
         <div className="flex items-center gap-3">
           <img 
-            src="/assets/Simbolo_PRAXIS_azul_em_movimento.png" 
+            src="/assets/Simbolo_PRAXIS_azul_em_movimento.webp" 
             alt="PRAXIS Símbolo" 
             className="w-8 h-8 object-contain"
           />

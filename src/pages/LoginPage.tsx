@@ -69,7 +69,7 @@ export const LoginPage: React.FC = () => {
       <div className="w-full max-w-md bg-[#0F172A] border border-[#334155] rounded-lg shadow-2xl p-8 relative z-10">
         <div className="text-center mb-8">
           <img
-            src="/assets/Logo_PRAXIS_com_fluxo_azul.png"
+            src="/assets/Logo_PRAXIS_com_fluxo_azul.webp"
             alt="PRAXIS Logo"
             className="h-12 mx-auto mb-3 object-contain"
           />

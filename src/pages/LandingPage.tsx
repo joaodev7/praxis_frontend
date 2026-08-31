@@ -51,7 +51,7 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <img 
-              src="/assets/Simbolo_PRAXIS_azul_em_movimento.png" 
+              src="/assets/Simbolo_PRAXIS_azul_em_movimento.webp" 
               alt="PRAXIS Logo" 
               className="h-9 w-9 object-contain"
             />
@@ -894,7 +894,7 @@ export const LandingPage: React.FC = () => {
             {/* Brand and Tagline */}
             <div className="flex items-center gap-3">
               <img 
-                src="/assets/Simbolo_PRAXIS_azul_em_movimento.png" 
+                src="/assets/Simbolo_PRAXIS_azul_em_movimento.webp" 
                 alt="PRAXIS" 
                 className="w-8 h-8 object-contain" 
               />
