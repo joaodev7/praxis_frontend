@@ -37,38 +37,21 @@ export interface SubscriptionInfo {
 
 export interface CheckoutRequest {
   planCode: string;
-  billingCycle: number;
-  paymentMethod: number; // 1=Pix, 2=CreditCard, 3=Boleto
-  creditCard?: {
-    holderName: string;
-    number: string;
-    expiryMonth: string;
-    expiryYear: string;
-    ccv: string;
-  };
-  creditCardHolderInfo?: {
-    name: string;
-    email: string;
-    cpfCnpj: string;
-    postalCode: string;
-    addressNumber: string;
-    phone: string;
-  };
+  billingCycle: number; // 1=Monthly, 2=Annual
+  successUrl?: string;
+  cancelUrl?: string;
 }
 
 export interface CheckoutResponse {
-  paymentId: string;
-  status: number;
+  subscriptionId?: string;
+  providerCheckoutId?: string;
+  checkoutUrl: string;
+  status: string;
   amount: number;
-  paymentMethod: number;
-  dueDate?: string;
-  invoiceUrl?: string;
-  pix?: {
-    qrCodeUrl?: string;
-    copyPasteCode?: string;
-    expirationDate?: string;
-  };
+  billingCycle: number;
   message: string;
+  invoiceUrl?: string;
+  paymentId?: string;
 }
 
 export interface PaymentHistory {

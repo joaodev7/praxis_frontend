@@ -9,8 +9,6 @@ import {
   ArrowRight, 
   Building2, 
   Users, 
-  QrCode, 
-  Copy, 
   CheckCircle2, 
   ExternalLink, 
   RefreshCw, 
@@ -18,7 +16,7 @@ import {
   HelpCircle,
   FileText
 } from 'lucide-react';
-import { billingService, Plan, SubscriptionInfo, PaymentHistory, CheckoutResponse } from '../services/billing';
+import { billingService, Plan, SubscriptionInfo, PaymentHistory } from '../services/billing';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 
@@ -32,25 +30,8 @@ export const BillingPage: React.FC = () => {
   // Checkout Modal State
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<1 | 2>(1); // 1 = Pix, 2 = Credit Card
   const [processingCheckout, setProcessingCheckout] = useState(false);
-  const [checkoutResult, setCheckoutResult] = useState<CheckoutResponse | null>(null);
-  const [copiedPix, setCopiedPix] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-
-  // Credit Card Form State
-  const [cardData, setCardData] = useState({
-    holderName: '',
-    number: '',
-    expiryMonth: '',
-    expiryYear: '',
-    ccv: '',
-    cpfCnpj: '',
-    email: '',
-    postalCode: '',
-    addressNumber: '',
-    phone: ''
-  });
 
   // Cancel / Action Modals
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -78,49 +59,9 @@ export const BillingPage: React.FC = () => {
     }
   };
 
-  const formatCardNumber = (val: string) => {
-    const digits = val.replace(/\D/g, '').substring(0, 16);
-    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
-  };
-
-  const formatCpfCnpj = (val: string) => {
-    // Retém letras e números para suporte total ao novo CNPJ alfanumérico da Receita Federal
-    const chars = val.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 14);
-    if (chars.length <= 11 && /^\d+$/.test(chars)) {
-      return chars
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-    }
-    return chars
-      .replace(/^([A-Z0-9]{2})([A-Z0-9])/, '$1.$2')
-      .replace(/^([A-Z0-9]{2})\.([A-Z0-9]{3})([A-Z0-9])/, '$1.$2.$3')
-      .replace(/\.([A-Z0-9]{3})([A-Z0-9])/, '.$1/$2')
-      .replace(/([A-Z0-9]{4})([A-Z0-9])/, '$1-$2');
-  };
-
-  const formatPhone = (val: string) => {
-    const digits = val.replace(/\D/g, '').substring(0, 11);
-    if (digits.length <= 10) {
-      return digits
-        .replace(/^(\d{2})(\d)/, '($1) $2')
-        .replace(/(\d{4})(\d{1,4})$/, '$1-$2');
-    }
-    return digits
-      .replace(/^(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d{1,4})$/, '$1-$2');
-  };
-
-  const formatCep = (val: string) => {
-    const digits = val.replace(/\D/g, '').substring(0, 8);
-    return digits.replace(/^(\d{5})(\d)/, '$1-$2');
-  };
-
   const handleOpenCheckout = (plan: Plan) => {
     setSelectedPlan(plan);
-    setCheckoutResult(null);
     setCheckoutError(null);
-    setCopiedPix(false);
     setIsCheckoutOpen(true);
   };
 
@@ -130,90 +71,23 @@ export const BillingPage: React.FC = () => {
       setProcessingCheckout(true);
       setCheckoutError(null);
 
-      const payload: any = {
+      const successUrl = `${window.location.origin}/billing/success`;
+      const response = await billingService.createCheckout({
         planCode: selectedPlan.code,
         billingCycle,
-        paymentMethod
-      };
+        successUrl
+      });
 
-      if (paymentMethod === 2) {
-        const cleanCard = cardData.number.replace(/\D/g, '');
-        const cleanCpfCnpj = cardData.cpfCnpj.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-        const cleanCvv = cardData.ccv.replace(/\D/g, '');
-        const cleanPhone = cardData.phone.replace(/\D/g, '');
-        const cleanPostalCode = cardData.postalCode.replace(/\D/g, '');
-
-        if (!cleanCard || !cardData.holderName || !cardData.expiryMonth || !cardData.expiryYear || !cleanCvv || !cleanCpfCnpj) {
-          setCheckoutError('Por favor, preencha todos os campos obrigatórios do cartão.');
-          setProcessingCheckout(false);
-          return;
-        }
-
-        if (cleanCpfCnpj.length !== 11 && cleanCpfCnpj.length !== 14) {
-          setCheckoutError('O CPF deve conter 11 dígitos ou o CNPJ deve conter 14 caracteres.');
-          setProcessingCheckout(false);
-          return;
-        }
-
-        if (!cleanPhone || cleanPhone.length < 10) {
-          setCheckoutError('Informe o número de contato com DDD do titular do cartão (mínimo 10 dígitos).');
-          setProcessingCheckout(false);
-          return;
-        }
-
-        if (!cleanPostalCode || cleanPostalCode.length < 8) {
-          setCheckoutError('Informe o CEP de cobrança válido (8 dígitos).');
-          setProcessingCheckout(false);
-          return;
-        }
-
-        if (!cardData.addressNumber.trim()) {
-          setCheckoutError('Informe o número do endereço de cobrança.');
-          setProcessingCheckout(false);
-          return;
-        }
-
-        if (cleanCard.length < 13) {
-          setCheckoutError('Número de cartão de crédito inválido.');
-          setProcessingCheckout(false);
-          return;
-        }
-
-        payload.creditCard = {
-          holderName: cardData.holderName.trim(),
-          number: cleanCard,
-          expiryMonth: cardData.expiryMonth.padStart(2, '0'),
-          expiryYear: cardData.expiryYear.length === 2 ? `20${cardData.expiryYear}` : cardData.expiryYear,
-          ccv: cleanCvv
-        };
-
-        payload.creditCardHolderInfo = {
-          name: cardData.holderName.trim(),
-          email: cardData.email.trim(),
-          cpfCnpj: cleanCpfCnpj,
-          postalCode: cleanPostalCode,
-          addressNumber: cardData.addressNumber.trim(),
-          phone: cleanPhone
-        };
+      if (response.checkoutUrl) {
+        // Redireciona diretamente para o ambiente seguro do Asaas Checkout
+        window.location.href = response.checkoutUrl;
+      } else {
+        setCheckoutError('Não foi possível obter o link de checkout do Asaas.');
+        setProcessingCheckout(false);
       }
-
-      const response = await billingService.createCheckout(payload);
-      setCheckoutResult(response);
-      
-      // Reload subscription data in background
-      loadData();
     } catch (err: any) {
-      setCheckoutError(err.response?.data?.message || 'Erro ao processar checkout. Verifique os dados e tente novamente.');
-    } finally {
+      setCheckoutError(err.response?.data?.message || 'Erro ao gerar checkout seguro. Tente novamente.');
       setProcessingCheckout(false);
-    }
-  };
-
-  const handleCopyPix = () => {
-    if (checkoutResult?.pix?.copyPasteCode) {
-      navigator.clipboard.writeText(checkoutResult.pix.copyPasteCode);
-      setCopiedPix(true);
-      setTimeout(() => setCopiedPix(false), 3000);
     }
   };
 
@@ -701,281 +575,75 @@ export const BillingPage: React.FC = () => {
       <Modal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
-        title={checkoutResult ? "Cobrança Gerada" : `Assinar ${selectedPlan?.name}`}
-        subtitle={checkoutResult ? "Siga as instruções para concluir o pagamento" : "Selecione o método de pagamento para ativação imediata"}
-        maxWidth="lg"
+        title="Assinar Plano PRAXIS"
+        subtitle="Ambiente de pagamento seguro fornecido por Asaas Checkout"
+        maxWidth="md"
       >
-        {checkoutResult ? (
-          <div className="space-y-6">
-            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <span className="text-xs font-semibold">{checkoutResult.message}</span>
+        <div className="space-y-5">
+          {/* Plan Summary Card */}
+          <div className="p-4 rounded-xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 flex items-center justify-between">
+            <div>
+              <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Plano Selecionado</span>
+              <strong className="text-base text-slate-900 dark:text-white font-bold">{selectedPlan?.name}</strong>
+              <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">
+                {billingCycle === 2 ? 'Ciclo Anual (com desconto de 2 meses)' : 'Ciclo Mensal'}
+              </span>
             </div>
-
-            {/* If Pix */}
-            {checkoutResult.pix && (
-              <div className="bg-slate-50 dark:bg-slate-800/60 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 text-center space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold">
-                  <QrCode className="w-4 h-4" />
-                  <span>PIX Instantâneo</span>
-                </div>
-
-                {checkoutResult.pix.qrCodeUrl && (
-                  <div className="flex justify-center my-2">
-                    <img 
-                      src={`data:image/png;base64,${checkoutResult.pix.qrCodeUrl}`} 
-                      alt="QR Code PIX" 
-                      className="w-48 h-48 rounded-lg border border-slate-300 dark:border-slate-600 bg-white p-2" 
-                    />
-                  </div>
-                )}
-
-                <div className="space-y-2 text-left">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                    Código PIX Copia e Cola
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      readOnly
-                      value={checkoutResult.pix.copyPasteCode || ''}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-slate-700 dark:text-slate-300 select-all"
-                    />
-                    <Button
-                      variant={copiedPix ? 'secondary' : 'primary'}
-                      size="sm"
-                      onClick={handleCopyPix}
-                      icon={copiedPix ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                      className="shrink-0"
-                    >
-                      {copiedPix ? 'Copiado!' : 'Copiar'}
-                    </Button>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-slate-400">
-                  Abra o aplicativo do seu banco, escolha a opção <strong>PIX Copia e Cola</strong> ou <strong>Ler QR Code</strong> e efetue o pagamento.
-                </p>
-              </div>
-            )}
-
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => {
-                  setIsCheckoutOpen(false);
-                  loadData();
-                }}
-              >
-                Concluir & Atualizar Status
-              </Button>
+            <div className="text-right">
+              <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Valor Total</span>
+              <strong className="text-lg text-blue-600 dark:text-blue-400 font-black">
+                {formatCurrency(billingCycle === 2 ? (selectedPlan?.annualPrice ?? 0) : (selectedPlan?.monthlyPrice ?? 0))}
+              </strong>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 block">
+                {billingCycle === 2 ? 'Equivalente a 10 meses' : 'Cobrado mensalmente'}
+              </span>
             </div>
           </div>
-        ) : (
-          <div className="space-y-6">
-            {/* Plan Info summary */}
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
-              <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">Plano Escolhido</span>
-                <strong className="text-sm text-slate-900 dark:text-white font-bold">{selectedPlan?.name}</strong>
-              </div>
-              <div className="text-right">
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">Valor do Ciclo ({billingCycle === 2 ? 'Anual' : 'Mensal'})</span>
-                <strong className="text-sm text-blue-600 dark:text-blue-400 font-black">
-                  {formatCurrency(billingCycle === 2 ? (selectedPlan?.annualPrice ?? 0) : (selectedPlan?.monthlyPrice ?? 0))}
-                </strong>
-              </div>
+
+          {checkoutError && (
+            <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{checkoutError}</span>
             </div>
+          )}
 
-            {checkoutError && (
-              <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0" />
-                <span>{checkoutError}</span>
-              </div>
-            )}
-
-            {/* Payment Method Selector */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                Forma de Pagamento
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod(1)}
-                  className={`p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer ${
-                    paymentMethod === 1
-                      ? 'border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold ring-2 ring-blue-500/20'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 text-slate-600 dark:text-slate-300'
-                  }`}
-                >
-                  <QrCode className="w-5 h-5" />
-                  <div className="text-left text-xs">
-                    <span className="block font-bold">PIX</span>
-                    <span className="text-[10px] opacity-75">Aprovação Imediata</span>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod(2)}
-                  className={`p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer ${
-                    paymentMethod === 2
-                      ? 'border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold ring-2 ring-blue-500/20'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 text-slate-600 dark:text-slate-300'
-                  }`}
-                >
-                  <CreditCard className="w-5 h-5" />
-                  <div className="text-left text-xs">
-                    <span className="block font-bold">Cartão de Crédito</span>
-                    <span className="text-[10px] opacity-75">Cobrança Recorrente</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* Credit Card Fields (If selected) */}
-            {paymentMethod === 2 && (
-              <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Nome no Cartão</label>
-                  <input
-                    type="text"
-                    placeholder="Como impresso no cartão"
-                    value={cardData.holderName}
-                    onChange={(e) => setCardData({ ...cardData, holderName: e.target.value })}
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Número do Cartão</label>
-                    <input
-                      type="text"
-                      placeholder="0000 0000 0000 0000"
-                      maxLength={19}
-                      value={cardData.number}
-                      onChange={(e) => setCardData({ ...cardData, number: formatCardNumber(e.target.value) })}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Mês</label>
-                      <input
-                        type="text"
-                        placeholder="MM"
-                        maxLength={2}
-                        value={cardData.expiryMonth}
-                        onChange={(e) => setCardData({ ...cardData, expiryMonth: e.target.value.replace(/\D/g, '').substring(0, 2) })}
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-center"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Ano</label>
-                      <input
-                        type="text"
-                        placeholder="AAAA"
-                        maxLength={4}
-                        value={cardData.expiryYear}
-                        onChange={(e) => setCardData({ ...cardData, expiryYear: e.target.value.replace(/\D/g, '').substring(0, 4) })}
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-center"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">CVV</label>
-                      <input
-                        type="text"
-                        placeholder="123"
-                        maxLength={4}
-                        value={cardData.ccv}
-                        onChange={(e) => setCardData({ ...cardData, ccv: e.target.value.replace(/\D/g, '').substring(0, 4) })}
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-center"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">CPF/CNPJ do Titular</label>
-                    <input
-                      type="text"
-                      placeholder="000.000.000-00"
-                      maxLength={18}
-                      value={cardData.cpfCnpj}
-                      onChange={(e) => setCardData({ ...cardData, cpfCnpj: formatCpfCnpj(e.target.value) })}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Celular / Tel. com DDD</label>
-                    <input
-                      type="text"
-                      placeholder="(00) 00000-0000"
-                      maxLength={15}
-                      value={cardData.phone}
-                      onChange={(e) => setCardData({ ...cardData, phone: formatPhone(e.target.value) })}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">E-mail do Titular</label>
-                    <input
-                      type="email"
-                      placeholder="email@empresa.com"
-                      value={cardData.email}
-                      onChange={(e) => setCardData({ ...cardData, email: e.target.value })}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">CEP de Cobrança</label>
-                    <input
-                      type="text"
-                      placeholder="00000-000"
-                      maxLength={9}
-                      value={cardData.postalCode}
-                      onChange={(e) => setCardData({ ...cardData, postalCode: formatCep(e.target.value) })}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Número do Endereço</label>
-                    <input
-                      type="text"
-                      placeholder="Nº endereço (ex: 123)"
-                      value={cardData.addressNumber}
-                      onChange={(e) => setCardData({ ...cardData, addressNumber: e.target.value })}
-                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-xs"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-              <Button variant="secondary" size="md" onClick={() => setIsCheckoutOpen(false)}>
-                Cancelar
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={handleExecuteCheckout}
-                loading={processingCheckout}
-                icon={<ShieldCheck className="w-4 h-4" />}
-              >
-                {paymentMethod === 1 ? 'Gerar Cobrança PIX' : 'Confirmar & Pagar'}
-              </Button>
-            </div>
+          {/* Benefits / Security Highlights */}
+          <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800 space-y-3">
+            <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              Pagamento 100% Seguro & Protegido
+            </h4>
+            <ul className="text-xs text-slate-600 dark:text-slate-300 space-y-2">
+              <li className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Escolha entre <strong>PIX</strong> (aprovação instantânea), <strong>Cartão de Crédito</strong> ou <strong>Boleto</strong> no Checkout.</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Dados de pagamento inseridos diretamente no ambiente certificado PCI-DSS do Asaas.</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Sem fidelidade: cancele ou altere seu plano quando quiser com 1 clique.</span>
+              </li>
+            </ul>
           </div>
-        )}
+
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <Button variant="secondary" size="md" onClick={() => setIsCheckoutOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleExecuteCheckout}
+              loading={processingCheckout}
+              icon={<ExternalLink className="w-4 h-4" />}
+            >
+              <span>Continuar para Pagamento Seguro</span>
+            </Button>
+          </div>
+        </div>
       </Modal>
 
       {/* CANCEL MODAL */}
