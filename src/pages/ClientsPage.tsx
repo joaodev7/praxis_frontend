@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { ClientCompany, Unit } from '../types';
-import { Building2, Plus, Phone, Mail, MapPin, ChevronRight, X, Layers } from 'lucide-react';
+import { ClientCompany, Unit, StoredFileDto } from '../types';
+import { Building2, Plus, Phone, Mail, MapPin, ChevronRight, X, Layers, Image as ImageIcon, Trash2, FolderOpen } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Badge } from '../components/ui/Badge';
 import { Input } from '../components/ui/Input';
+import { FileUpload } from '../components/files/FileUpload';
+import { PrivateImage } from '../components/files/PrivateImage';
+import { PdfViewerButton } from '../components/files/PdfViewerButton';
+import { listClientFiles, deleteFile } from '../services/fileService';
 
 export const ClientsPage: React.FC = () => {
   const [clients, setClients] = useState<ClientCompany[]>([]);
@@ -14,6 +18,9 @@ export const ClientsPage: React.FC = () => {
   const [selectedClient, setSelectedClient] = useState<ClientCompany | null>(null);
   const [showClientModal, setShowClientModal] = useState(false);
   const [showUnitModal, setShowUnitModal] = useState(false);
+  const [showFilesModal, setShowFilesModal] = useState(false);
+  const [clientFiles, setClientFiles] = useState<StoredFileDto[]>([]);
+  const [filesLoading, setFilesLoading] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // New Client Form
@@ -34,6 +41,36 @@ export const ClientsPage: React.FC = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  const loadClientFiles = async (clientId: string) => {
+    setFilesLoading(true);
+    try {
+      const files = await listClientFiles(clientId);
+      setClientFiles(files);
+    } catch (err) {
+      console.error('Erro ao carregar arquivos do cliente:', err);
+    } finally {
+      setFilesLoading(false);
+    }
+  };
+
+  const openFilesModal = (client: ClientCompany) => {
+    setSelectedClient(client);
+    setShowFilesModal(true);
+    loadClientFiles(client.id);
+  };
+
+  const handleDeleteFile = async (fileId: string) => {
+    if (!confirm('Deseja realmente excluir este arquivo?')) return;
+    try {
+      await deleteFile(fileId);
+      if (selectedClient) {
+        loadClientFiles(selectedClient.id);
+      }
+    } catch (err: any) {
+      alert(err.message || 'Erro ao excluir arquivo.');
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -160,7 +197,17 @@ export const ClientsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-[#CBD5E1] dark:border-[#334155] flex justify-end">
+              <div className="mt-5 pt-3 border-t border-[#CBD5E1] dark:border-[#334155] flex justify-between items-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon={<FolderOpen className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />}
+                  onClick={() => openFilesModal(client)}
+                  className="!text-[#2563EB] dark:!text-[#60A5FA] hover:!bg-[#EFF6FF] dark:hover:!bg-blue-950/30"
+                >
+                  Arquivos & Fotos
+                </Button>
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -292,6 +339,102 @@ export const ClientsPage: React.FC = () => {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      {/* Modal Arquivos & Fotos (Cloudflare R2) */}
+      <Modal
+        isOpen={showFilesModal && !!selectedClient}
+        onClose={() => setShowFilesModal(false)}
+        title={`Arquivos & Fotos — ${selectedClient?.tradeName}`}
+        subtitle="Armazenamento seguro de fotos de vistorias, laudos e documentos via Cloudflare R2"
+      >
+        <div className="space-y-6">
+          {/* File Upload Component */}
+          {selectedClient && (
+            <FileUpload
+              label="Enviar Foto ou Documento do Estabelecimento"
+              description="Imagens (JPG, PNG, WEBP até 5 MB) ou Laudos Técnicos (PDF até 10 MB)"
+              category="ClientPhoto"
+              clientId={selectedClient.id}
+              onSuccess={() => {
+                loadClientFiles(selectedClient.id);
+              }}
+            />
+          )}
+
+          {/* List of uploaded files */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]">
+              Arquivos Armazenados ({clientFiles.length})
+            </h4>
+
+            {filesLoading ? (
+              <div className="p-6 text-center text-xs text-[#64748B] dark:text-[#94A3B8]">
+                Carregando arquivos...
+              </div>
+            ) : clientFiles.length === 0 ? (
+              <div className="p-6 border border-dashed border-[#CBD5E1] dark:border-[#334155] rounded-md text-center text-xs text-[#64748B] dark:text-[#94A3B8]">
+                Nenhum arquivo enviado para este cliente ainda.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-1">
+                {clientFiles.map((file) => {
+                  const isImage = file.contentType.startsWith('image/');
+                  return (
+                    <div
+                      key={file.id}
+                      className="p-3 bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#CBD5E1] dark:border-[#334155] rounded-md flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-2.5 overflow-hidden">
+                        {isImage ? (
+                          <PrivateImage
+                            fileId={file.id}
+                            alt={file.originalFileName}
+                            className="w-12 h-12 shrink-0 object-cover rounded border border-[#CBD5E1] dark:border-[#334155]"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 shrink-0 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/40 rounded flex items-center justify-center text-red-600">
+                            <span className="font-bold text-[10px]">PDF</span>
+                          </div>
+                        )}
+
+                        <div className="overflow-hidden">
+                          <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC] truncate" title={file.originalFileName}>
+                            {file.originalFileName}
+                          </p>
+                          <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                            {(file.size / 1024).toFixed(0)} KB • {new Date(file.createdAt).toLocaleDateString('pt-BR')}
+                          </p>
+                          {!isImage && (
+                            <div className="mt-1">
+                              <PdfViewerButton fileId={file.id} label="Abrir Laudo" size="sm" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFile(file.id)}
+                        className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded transition shrink-0"
+                        title="Excluir arquivo do Cloudflare R2"
+                        aria-label="Excluir arquivo"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-[#CBD5E1] dark:border-[#334155]">
+            <Button variant="secondary" onClick={() => setShowFilesModal(false)}>
+              Fechar
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
