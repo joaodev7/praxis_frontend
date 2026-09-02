@@ -29,9 +29,19 @@ export interface ClientCompany {
   address?: string;
   responsibleName?: string;
   notes?: string;
-  status: string;
+  status: 'Active' | 'Inactive' | string;
   createdAt: string;
   unitsCount: number;
+}
+
+export interface AssignedNutritionist {
+  nutritionistId: string;
+  userId: string;
+  name: string;
+  email: string;
+  crn: string;
+  phone: string;
+  status: 'Active' | 'Inactive' | string;
 }
 
 export interface Unit {
@@ -43,10 +53,11 @@ export interface Unit {
   phone: string;
   responsibleName: string;
   notes?: string;
-  status: string;
+  status: 'Active' | 'Inactive' | string;
   createdAt: string;
   activeArtNumber?: string;
   totalVisits: number;
+  assignedNutritionists?: AssignedNutritionist[];
 }
 
 export interface Nutritionist {
@@ -56,7 +67,7 @@ export interface Nutritionist {
   email: string;
   crn: string;
   phone: string;
-  status: string;
+  status: 'Active' | 'Inactive' | string;
   createdAt: string;
   assignedUnitIds: string[];
 }
@@ -187,4 +198,3 @@ export interface DashboardMetrics {
 }
 
 export * from './file';
-
