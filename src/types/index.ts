@@ -126,13 +126,83 @@ export interface NonConformity {
   evidences: Evidence[];
 }
 
+export type ActionPlanStatus = 'Pendente' | 'EmAndamento' | 'AguardandoValidacao' | 'Concluida' | 'Cancelada';
+export type ActionPlanPriority = 'Baixa' | 'Media' | 'Alta' | 'Critica';
+
+export interface ActionPlanEvidence {
+  id: string;
+  actionPlanId: string;
+  fileUrl: string;
+  objectKey: string;
+  fileName: string;
+  contentType: string;
+  fileSize: number;
+  uploadedAt: string;
+  uploadedByUserId?: string;
+  uploadedByUserName?: string;
+}
+
+export interface ActionPlan {
+  id: string;
+  nonConformityId: string;
+  nonConformityDescription: string;
+  visitId?: string;
+  unitId?: string;
+  unitName: string;
+  clientCompanyId?: string;
+  clientCompanyName: string;
+  what: string;
+  description: string;
+  why?: string;
+  responsibleUserId?: string;
+  responsibleUserName?: string;
+  responsibleName?: string;
+  dueDate?: string;
+  where?: string;
+  how?: string;
+  howMuch?: number;
+  priority: ActionPlanPriority;
+  status: ActionPlanStatus;
+  startedAt?: string;
+  completedAt?: string;
+  validatedAt?: string;
+  validatedByUserId?: string;
+  validatedByUserName?: string;
+  validationComment?: string;
+  cancellationReason?: string;
+  notes?: string;
+  isLate: boolean;
+  createdAt: string;
+  evidences: ActionPlanEvidence[];
+}
+
+export interface ActionPlanDashboardMetrics {
+  totalActions: number;
+  pendingActions: number;
+  inProgressActions: number;
+  waitingValidationActions: number;
+  completedActions: number;
+  cancelledActions: number;
+  lateActions: number;
+  clientMetrics: Array<{
+    clientCompanyId: string;
+    clientCompanyName: string;
+    totalActions: number;
+    completedActions: number;
+    inProgressActions: number;
+    pendingActions: number;
+    waitingValidationActions: number;
+    lateActions: number;
+  }>;
+}
+
 export interface ActionItem {
   id: string;
   nonConformityId: string;
   description: string;
   responsibleUserName?: string;
   dueDate?: string;
-  status: 'Pendente' | 'EmAndamento' | 'Concluida' | 'Cancelada';
+  status: ActionPlanStatus;
   completedAt?: string;
   notes?: string;
 }
@@ -197,4 +267,23 @@ export interface DashboardMetrics {
   }>;
 }
 
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  dateOfBirth?: string | null;
+  profilePhotoUrl?: string | null;
+}
+
+export interface UpdateProfileRequest {
+  name: string;
+  dateOfBirth?: string | null;
+}
+
+export interface ProfilePhotoUploadResponse {
+  profilePhotoUrl: string;
+  message: string;
+}
+
 export * from './file';
+

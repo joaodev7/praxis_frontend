@@ -13,6 +13,7 @@ import { NonConformitiesPage } from './pages/NonConformitiesPage';
 import { ChecklistsPage } from './pages/ChecklistsPage';
 import { BillingPage } from './pages/BillingPage';
 import { BillingSuccessPage } from './pages/BillingSuccessPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { ThemeProvider } from './context/ThemeContext';
 
 const ProtectedLayout: React.FC = () => {
@@ -57,6 +58,7 @@ export const App: React.FC = () => {
             <Route path="/checklists" element={<ChecklistsPage />} />
             <Route path="/billing" element={<BillingPage />} />
             <Route path="/billing/success" element={<BillingSuccessPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
           {/* Fallback */}
