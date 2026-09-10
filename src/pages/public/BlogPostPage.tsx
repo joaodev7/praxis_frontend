@@ -200,7 +200,7 @@ export const BlogPostPage: React.FC = () => {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link to="/login?register=true">
-                <Button variant="primary" className="bg-white text-blue-900 hover:bg-blue-50 font-bold">
+                <Button variant="white" className="font-bold">
                   Testar Gratuitamente no PRAXIS
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>

@@ -20,6 +20,37 @@ import { billingService, Plan, SubscriptionInfo, PaymentHistory } from '../servi
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 
+const PLAN_FEATURES: Record<string, string[]> = {
+  essential: [
+    'Até 5 clientes ativos',
+    'Até 15 unidades de atendimento',
+    'Checklist RDC 216 completo',
+    'Relatórios e laudos em PDF com sua marca',
+    'Controle de ARTs com alertas de vencimento',
+    'Módulo de Etiquetagem Térmica (80x50 e 50x30)',
+    'Suporte prioritário via WhatsApp'
+  ],
+  professional: [
+    'Até 25 clientes ativos',
+    'Até 60 unidades de atendimento',
+    'Até 5 nutricionistas na equipe',
+    'Planos de ação 5W2H automatizados',
+    'Geolocalização de visitas e check-in em campo',
+    'Etiquetagem com QR Code público de validação',
+    'Histórico ilimitado de auditorias e fotos',
+    'Onboarding personalizado da equipe'
+  ],
+  enterprise: [
+    'Clientes e unidades ilimitados',
+    'Nutricionistas ilimitados',
+    'API de integração de dados',
+    'Dashboards executivos consolidados',
+    'Gestor de conta e suporte 24/7',
+    'Treinamento presencial/remoto de equipe',
+    'SLA de 99.9% de disponibilidade'
+  ]
+};
+
 export const BillingPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -372,7 +403,7 @@ export const BillingPage: React.FC = () => {
               >
                 {isPopular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md">
-                    Mais Escolhido
+                    Mais Escolhido por Consultorias
                   </div>
                 )}
 
@@ -391,90 +422,32 @@ export const BillingPage: React.FC = () => {
                   </p>
 
                   <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-                    {plan.code === 'enterprise' ? (
-                      <div className="text-2xl font-black text-slate-900 dark:text-white">Sob Consulta</div>
-                    ) : (
-                      <div>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(price)}</span>
-                          <span className="text-xs text-slate-500 dark:text-slate-400">/mês</span>
-                        </div>
-                        {billingCycle === 2 && (
-                          <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
-                            Faturado anualmente: {formatCurrency(plan.annualPrice)}/ano
-                          </p>
-                        )}
+                    <div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(price)}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">/mês</span>
                       </div>
-                    )}
+                      {billingCycle === 2 && (
+                        <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
+                          Faturado anualmente: {formatCurrency(plan.annualPrice)}/ano
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Limits and features */}
-                  <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-                    <div className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-200">
-                      <Users className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>Até {plan.maxNutritionists >= 999 ? 'Ilimitados' : plan.maxNutritionists} Nutricionistas</span>
-                    </div>
-                    <div className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-200">
-                      <Building2 className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>Até {plan.maxClientCompanies >= 999 ? 'Ilimitadas' : plan.maxClientCompanies} Empresas Clientes</span>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        <span>Checklists RDC 216 e Auditorias</span>
+                  <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
+                    {(PLAN_FEATURES[plan.code] || []).map((feat, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>{feat}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        <span>Laudos Técnicos em PDF</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        <span>App Mobile em Campo</span>
-                      </div>
-                      {plan.code !== 'essential' && (
-                        <>
-                          <div className="flex items-center gap-2 font-medium text-blue-600 dark:text-blue-400">
-                            <Check className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                            <span>Indicadores e Gráficos Avançados</span>
-                          </div>
-                          <div className="flex items-center gap-2 font-medium text-blue-600 dark:text-blue-400">
-                            <Check className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                            <span>Exportação de Relatórios em Excel</span>
-                          </div>
-                          <div className="flex items-center gap-2 font-medium text-blue-600 dark:text-blue-400">
-                            <Check className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                            <span>Suporte Prioritário</span>
-                          </div>
-                        </>
-                      )}
-                      {plan.code === 'enterprise' && (
-                        <>
-                          <div className="flex items-center gap-2 font-medium text-purple-600 dark:text-purple-400">
-                            <Check className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-                            <span>Onboarding e Treinamento Dedicado</span>
-                          </div>
-                          <div className="flex items-center gap-2 font-medium text-purple-600 dark:text-purple-400">
-                            <Check className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-                            <span>Integrações Customizadas</span>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                    ))}
                   </div>
                 </div>
 
                 <div className="mt-8 pt-4">
-                  {plan.code === 'enterprise' ? (
-                    <Button
-                      variant="secondary"
-                      size="md"
-                      className="w-full"
-                      onClick={() => window.open('mailto:contato@praxisnutri.com.br?subject=PRAXIS%20Enterprise', '_blank')}
-                    >
-                      Falar com Consultor
-                    </Button>
-                  ) : isCurrent && subscription?.status === 2 ? (
+                  {isCurrent && subscription?.status === 2 ? (
                     <Button variant="secondary" size="md" disabled className="w-full opacity-60">
                       Plano Ativo
                     </Button>

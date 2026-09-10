@@ -631,69 +631,61 @@ export const LandingPage: React.FC = () => {
           {/* Cards Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
             
-            {/* 1. Essencial */}
+            {/* 1. Profissional Autônomo */}
             <div className="bg-white dark:bg-[#0F172A] rounded-3xl p-8 border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all">
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">PRAXIS Essencial</h3>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Profissional Autônomo</h3>
                   <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                    Iniciante
+                    Autônomo
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 min-h-[36px]">
-                  Para consultorias e nutricionistas RT que estão digitalizando seus primeiros clientes e auditorias.
+                  Ideal para nutricionistas RTs autônomos que atendem até 5 estabelecimentos.
                 </p>
 
                 <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-black text-slate-900 dark:text-white">
-                      {pricingCycle === 'annual' ? 'R$ 124' : 'R$ 149'}
+                      {pricingCycle === 'annual' ? 'R$ 119' : 'R$ 149'}
                     </span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">/mês</span>
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    {pricingCycle === 'annual' ? 'Cobrado anualmente: R$ 1.490/ano' : 'Cobrança mensal recorrente via PIX ou Cartão'}
+                    {pricingCycle === 'annual' ? 'Cobrado anualmente com 20% OFF' : 'Cobrança mensal recorrente via PIX ou Cartão'}
                   </p>
                 </div>
 
                 <div className="space-y-3.5 text-xs text-slate-600 dark:text-slate-300">
                   <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
-                    <Users className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span>Até 3 Nutricionistas RT</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
                     <Building2 className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span>Até 10 Empresas Clientes</span>
+                    <span>Até 5 clientes ativos</span>
                   </div>
                   <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
                     <Layers className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span>1 GB de armazenamento em nuvem</span>
+                    <span>Até 15 unidades de atendimento</span>
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
                     <div className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Checklists RDC 216 e Boas Práticas</span>
+                      <span>Checklist RDC 216 completo</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Visitas Técnicas & Não Conformidades</span>
+                      <span>Relatórios e laudos em PDF com sua marca</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Controle de ARTs e Responsabilidade Técnica</span>
+                      <span>Controle de ARTs com alertas de vencimento</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Laudos Técnicos em PDF com Fotos</span>
+                      <span>Módulo de Etiquetagem Térmica (80x50 e 50x30)</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Aplicativo Web & Mobile responsivo</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400">
-                      <Check className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
-                      <span>Suporte padrão por e-mail</span>
+                      <span>Suporte prioritário via WhatsApp</span>
                     </div>
                   </div>
                 </div>
@@ -706,75 +698,75 @@ export const LandingPage: React.FC = () => {
                   className="w-full font-bold"
                   onClick={() => navigate(token ? '/billing' : '/login?register=true')}
                 >
-                  Começar 14 Dias Grátis
+                  Começar com Plano Autônomo
                 </Button>
               </div>
             </div>
 
-            {/* 2. Profissional (Destaque) */}
+            {/* 2. Consultoria Pro (Destaque) */}
             <div className="bg-white dark:bg-[#0F172A] rounded-3xl p-8 border-2 border-blue-600 dark:border-blue-500 flex flex-col justify-between shadow-2xl shadow-blue-500/10 relative ring-4 ring-blue-500/10">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>Mais Escolhido & Recomendado</span>
+                <span>Mais Escolhido por Consultorias</span>
               </div>
 
               <div>
                 <div className="flex items-center justify-between mt-1">
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white">PRAXIS Profissional</h3>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white">Consultoria Pro</h3>
                   <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                    Completo
+                    Mais Popular
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 min-h-[36px]">
-                  Para empresas e equipes em crescimento que precisam de indicadores avançados, relatórios executivos e escala.
+                  Para consultorias em expansão com múltiplos clientes e equipe de nutricionistas.
                 </p>
 
                 <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-black text-slate-900 dark:text-white">
-                      {pricingCycle === 'annual' ? 'R$ 249' : 'R$ 299'}
+                      {pricingCycle === 'annual' ? 'R$ 239' : 'R$ 299'}
                     </span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">/mês</span>
                   </div>
                   <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold mt-1">
-                    {pricingCycle === 'annual' ? 'Cobrado anualmente: R$ 2.990/ano (Economize R$ 598)' : 'Cobrança mensal recorrente via PIX ou Cartão'}
+                    {pricingCycle === 'annual' ? 'Cobrado anualmente com 20% OFF' : 'Cobrança mensal recorrente via PIX ou Cartão'}
                   </p>
                 </div>
 
                 <div className="space-y-3.5 text-xs text-slate-600 dark:text-slate-300">
                   <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
-                    <Users className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span>Até 10 Nutricionistas RT</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
                     <Building2 className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span>Até 50 Empresas Clientes</span>
+                    <span>Até 25 clientes ativos</span>
                   </div>
                   <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
                     <Layers className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span>5 GB de armazenamento em nuvem</span>
+                    <span>Até 60 unidades de atendimento</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
+                    <Users className="w-4 h-4 text-blue-500 shrink-0" />
+                    <span>Até 5 nutricionistas na equipe</span>
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
-                    <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
+                    <div className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
                       <Check className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>Tudo do Plano Essencial</span>
+                      <span>Planos de ação 5W2H automatizados</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
                       <Check className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>Dashboard & Indicadores de Não Conformidades</span>
+                      <span>Geolocalização de visitas e check-in em campo</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
                       <Check className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>Exportação de Dados e Relatórios em Excel</span>
+                      <span>Etiquetagem com QR Code público de validação</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
                       <Check className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>Gestão Multi-unidades por Empresa Cliente</span>
+                      <span>Histórico ilimitado de auditorias e fotos</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
                       <Check className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>Suporte Prioritário via WhatsApp e E-mail</span>
+                      <span>Onboarding personalizado da equipe</span>
                     </div>
                   </div>
                 </div>
@@ -788,67 +780,66 @@ export const LandingPage: React.FC = () => {
                   onClick={() => navigate(token ? '/billing' : '/login?register=true')}
                   icon={<ArrowRight className="w-4 h-4" />}
                 >
-                  Experimentar 14 Dias Grátis
+                  Escolher Consultoria Pro
                 </Button>
               </div>
             </div>
 
-            {/* 3. Enterprise */}
+            {/* 3. Consultoria Escala */}
             <div className="bg-white dark:bg-[#0F172A] rounded-3xl p-8 border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all">
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">PRAXIS Enterprise</h3>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Consultoria Escala</h3>
                   <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400">
                     Grandes Redes
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 min-h-[36px]">
-                  Para redes de consultoria, franquias e grandes operações com demandas customizadas de integração e governança.
+                  Para grandes consultorias, redes de franquias e empresas de alimentação coletiva.
                 </p>
 
                 <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">Sob Consulta</span>
+                    <span className="text-4xl font-black text-slate-900 dark:text-white">
+                      {pricingCycle === 'annual' ? 'R$ 439' : 'R$ 549'}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">/mês</span>
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    Proposta sob medida conforme o porte da sua operação
+                    {pricingCycle === 'annual' ? 'Cobrado anualmente com 20% OFF' : 'Cobrança mensal recorrente via PIX ou Cartão'}
                   </p>
                 </div>
 
                 <div className="space-y-3.5 text-xs text-slate-600 dark:text-slate-300">
                   <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
-                    <Users className="w-4 h-4 text-purple-500 shrink-0" />
-                    <span>Nutricionistas RT Ilimitados</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
                     <Building2 className="w-4 h-4 text-purple-500 shrink-0" />
-                    <span>Empresas Clientes Ilimitadas</span>
+                    <span>Clientes e unidades ilimitados</span>
                   </div>
                   <div className="flex items-center gap-2.5 font-bold text-slate-900 dark:text-white">
-                    <Layers className="w-4 h-4 text-purple-500 shrink-0" />
-                    <span>Armazenamento Customizado (50 GB+)</span>
+                    <Users className="w-4 h-4 text-purple-500 shrink-0" />
+                    <span>Nutricionistas ilimitados</span>
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
-                    <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
+                    <div className="flex items-center gap-2 font-semibold text-purple-600 dark:text-purple-400">
                       <Check className="w-4 h-4 text-purple-500 shrink-0" />
-                      <span>Tudo do Plano Profissional</span>
+                      <span>API de integração de dados</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-purple-600 dark:text-purple-400">
                       <Check className="w-4 h-4 text-purple-500 shrink-0" />
-                      <span>Treinamento & Onboarding dedicado</span>
+                      <span>Dashboards executivos consolidados</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-purple-600 dark:text-purple-400">
                       <Check className="w-4 h-4 text-purple-500 shrink-0" />
-                      <span>Integrações via API e Webhooks</span>
+                      <span>Gestor de conta e suporte 24/7</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-purple-600 dark:text-purple-400">
                       <Check className="w-4 h-4 text-purple-500 shrink-0" />
-                      <span>SLA garantido e Gerente de Conta</span>
+                      <span>Treinamento presencial/remoto de equipe</span>
                     </div>
                     <div className="flex items-center gap-2 font-semibold text-purple-600 dark:text-purple-400">
                       <Check className="w-4 h-4 text-purple-500 shrink-0" />
-                      <span>Contrato corporativo customizado</span>
+                      <span>SLA de 99.9% de disponibilidade</span>
                     </div>
                   </div>
                 </div>
@@ -859,9 +850,9 @@ export const LandingPage: React.FC = () => {
                   variant="secondary"
                   size="lg"
                   className="w-full font-bold"
-                  onClick={() => setShowContactModal(true)}
+                  onClick={() => navigate(token ? '/billing' : '/login?register=true')}
                 >
-                  Falar com Consultor
+                  Escolher Consultoria Escala
                 </Button>
               </div>
             </div>
