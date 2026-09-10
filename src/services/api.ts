@@ -10,24 +10,28 @@ function resolveApiBaseUrl(): string {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
 
+    // Detectar ambiente de Sandbox / Preview Cloudflare Pages pelo hostname
+    if (hostname === 'sandbox.praxisnutri.com.br' || hostname.endsWith('.sandbox.praxisnutri.com.br')) {
+      return 'https://api.sandbox.praxisnutri.com.br/api';
+    }
+
+    // Detectar ambiente de Produção pelo hostname
+    if (hostname === 'praxisnutri.com.br' || hostname === 'www.praxisnutri.com.br') {
+      return 'https://api.praxisnutri.com.br/api';
+    }
+
+    // Ambiente de desenvolvimento local (se envUrl não configurado)
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && !envUrl) {
+      return 'http://localhost:5000/api';
+    }
+
     // Se a variável foi erroneamente configurada com a URL do frontend sem o prefixo 'api.'
     if (envUrl && envUrl.includes('//sandbox.praxisnutri.com.br') && !envUrl.includes('api.sandbox')) {
       envUrl = envUrl.replace('//sandbox.praxisnutri.com.br', '//api.sandbox.praxisnutri.com.br');
     }
-
-    // Fallback inteligente para ambiente Cloudflare Pages Sandbox
-    if (!envUrl) {
-      if (hostname === 'sandbox.praxisnutri.com.br' || hostname.endsWith('.sandbox.praxisnutri.com.br')) {
-        envUrl = 'https://api.sandbox.praxisnutri.com.br';
-      } else if (hostname === 'praxisnutri.com.br' || hostname === 'www.praxisnutri.com.br') {
-        envUrl = 'https://api.praxisnutri.com.br';
-      } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        envUrl = 'http://localhost:5000';
-      }
-    }
   }
 
-  const rawUrl = envUrl || 'https://api.sandbox.praxisnutri.com.br';
+  const rawUrl = envUrl || 'https://api.praxisnutri.com.br';
   const cleanUrl = rawUrl.trim().replace(/\/+$/, '');
   return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
 }
