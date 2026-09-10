@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Visit, Unit, Nutritionist, Checklist } from '../types';
-import { CalendarDays, Plus, Download, FileText, CheckCircle2, Clock, Eye } from 'lucide-react';
+import { CalendarDays, Plus, Download, FileText, CheckCircle2, Clock, Eye, CalendarX, Trash2, AlertTriangle } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
@@ -15,6 +15,13 @@ export const VisitsPage: React.FC = () => {
   const [checklists, setChecklists] = useState<Checklist[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Cancel & Delete Modals State
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedVisit, setSelectedVisit] = useState<Visit | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Form
   const [unitId, setUnitId] = useState('');
@@ -81,6 +88,48 @@ export const VisitsPage: React.FC = () => {
     }
   };
 
+  const handleOpenCancel = (visit: Visit) => {
+    setSelectedVisit(visit);
+    setCancelReason('');
+    setShowCancelModal(true);
+  };
+
+  const handleConfirmCancel = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedVisit) return;
+    setActionLoading(true);
+    try {
+      await api.post(`/visits/${selectedVisit.id}/cancel`, { reason: cancelReason || null });
+      setShowCancelModal(false);
+      setSelectedVisit(null);
+      await loadData();
+    } catch (err) {
+      alert('Erro ao desmarcar visita.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleOpenDelete = (visit: Visit) => {
+    setSelectedVisit(visit);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedVisit) return;
+    setActionLoading(true);
+    try {
+      await api.delete(`/visits/${selectedVisit.id}`);
+      setShowDeleteModal(false);
+      setSelectedVisit(null);
+      await loadData();
+    } catch (err) {
+      alert('Erro ao excluir visita.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
@@ -107,7 +156,7 @@ export const VisitsPage: React.FC = () => {
               <th className="p-4">Data / Horário</th>
               <th className="p-4">Status</th>
               <th className="p-4">Conformidade</th>
-              <th className="p-4 text-right">Relatório Técnico</th>
+              <th className="p-4 text-right">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#CBD5E1] dark:divide-[#334155]">
@@ -130,11 +179,19 @@ export const VisitsPage: React.FC = () => {
                         ? 'success'
                         : visit.status === 'InProgress'
                         ? 'info'
+                        : visit.status === 'Cancelled'
+                        ? 'danger'
                         : 'warning'
                     }
                     size="sm"
                   >
-                    {visit.status === 'Finished' ? 'Finalizada' : visit.status === 'InProgress' ? 'Em Andamento' : 'Agendada'}
+                    {visit.status === 'Finished'
+                      ? 'Finalizada'
+                      : visit.status === 'InProgress'
+                      ? 'Em Andamento'
+                      : visit.status === 'Cancelled'
+                      ? 'Desmarcada'
+                      : 'Agendada'}
                   </Badge>
                 </td>
                 <td className="p-4">
@@ -147,17 +204,42 @@ export const VisitsPage: React.FC = () => {
                   )}
                 </td>
                 <td className="p-4 text-right">
-                  {visit.status === 'Finished' && (
+                  <div className="flex items-center justify-end gap-1.5">
+                    {visit.status === 'Finished' && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon={<Download className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />}
+                        onClick={() => handleDownloadPdf(visit.id, visit.unitName)}
+                        className="!text-xs"
+                        title="Exportar Relatório em PDF"
+                      >
+                        PDF
+                      </Button>
+                    )}
+                    {visit.status !== 'Cancelled' && visit.status !== 'Finished' && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon={<CalendarX className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />}
+                        onClick={() => handleOpenCancel(visit)}
+                        className="!text-xs text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+                        title="Desmarcar visita"
+                      >
+                        Desmarcar
+                      </Button>
+                    )}
                     <Button
-                      variant="secondary"
+                      variant="ghost"
                       size="sm"
-                      icon={<Download className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />}
-                      onClick={() => handleDownloadPdf(visit.id, visit.unitName)}
-                      className="!text-xs"
+                      icon={<Trash2 className="w-3.5 h-3.5 text-rose-500" />}
+                      onClick={() => handleOpenDelete(visit)}
+                      className="!text-xs hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600"
+                      title="Excluir visita"
                     >
-                      Exportar PDF
+                      Excluir
                     </Button>
-                  )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -245,6 +327,97 @@ export const VisitsPage: React.FC = () => {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      {/* Modal Desmarcar Visita */}
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => {
+          if (!actionLoading) setShowCancelModal(false);
+        }}
+        title="Desmarcar Visita Técnica"
+        subtitle={selectedVisit ? `${selectedVisit.unitName} — ${new Date(selectedVisit.scheduledAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}
+      >
+        <form onSubmit={handleConfirmCancel} className="space-y-4">
+          <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 rounded-sm text-sm text-amber-800 dark:text-amber-300 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>
+              Ao desmarcar esta visita, seu status será alterado para <strong>Desmarcada</strong> e ela não aparecerá mais como pendente para o nutricionista.
+            </span>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#334155] dark:text-[#94A3B8] uppercase mb-1">
+              Motivo do Cancelamento (opcional)
+            </label>
+            <textarea
+              value={cancelReason}
+              onChange={e => setCancelReason(e.target.value)}
+              placeholder="Ex: Imprevisto com o cliente, reagendamento solicitado..."
+              rows={3}
+              className="w-full bg-white dark:bg-[#1E293B] border border-[#CBD5E1] dark:border-[#334155] text-sm text-[#0F172A] dark:text-[#F8FAFC] placeholder-slate-400 dark:placeholder-slate-500 rounded-sm py-2 px-3 focus:border-[#2563EB] dark:focus:border-[#3B82F6] focus:outline-none"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-[#CBD5E1] dark:border-[#334155]">
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={actionLoading}
+              onClick={() => setShowCancelModal(false)}
+            >
+              Voltar
+            </Button>
+            <Button
+              type="submit"
+              variant="danger"
+              loading={actionLoading}
+            >
+              Confirmar e Desmarcar
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Modal Excluir Visita */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          if (!actionLoading) setShowDeleteModal(false);
+        }}
+        title="Excluir Visita Técnica"
+        subtitle={selectedVisit ? `${selectedVisit.unitName} — ${new Date(selectedVisit.scheduledAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}
+      >
+        <div className="space-y-4">
+          <div className="p-3 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/40 rounded-sm text-sm text-rose-800 dark:text-rose-300 flex items-start gap-2">
+            <AlertTriangle className="w-5 h-5 shrink-0 text-rose-600 mt-0.5" />
+            <div>
+              <p className="font-semibold">Tem certeza de que deseja excluir esta visita?</p>
+              <p className="text-xs mt-1 text-rose-700 dark:text-rose-400">
+                Esta ação removerá a visita do histórico e do painel do nutricionista. Não-conformidades associadas também serão removidas.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-[#CBD5E1] dark:border-[#334155]">
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={actionLoading}
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              loading={actionLoading}
+              onClick={handleConfirmDelete}
+            >
+              Excluir Definitivamente
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

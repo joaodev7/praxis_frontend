@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Building2, Sun, Moon, Download, ShieldCheck, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -8,9 +8,18 @@ export const Header: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isExporting, setIsExporting] = useState(false);
-  const user = JSON.parse(localStorage.getItem('praxis_user') || '{}');
+  const [currentUser, setCurrentUser] = useState(() => JSON.parse(localStorage.getItem('praxis_user') || '{}'));
   const tenant = JSON.parse(localStorage.getItem('praxis_tenant') || '{}');
-  const displayName = (!user.name || user.name.includes('Mariana Silva')) ? 'Dra. Jamily Pinto' : user.name;
+
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      setCurrentUser(JSON.parse(localStorage.getItem('praxis_user') || '{}'));
+    };
+    window.addEventListener('user-profile-updated', handleProfileUpdate);
+    return () => window.removeEventListener('user-profile-updated', handleProfileUpdate);
+  }, []);
+
+  const displayName = currentUser.name || 'Usuário';
 
   const handleLogout = () => {
     localStorage.removeItem('praxis_token');
@@ -26,7 +35,7 @@ export const Header: React.FC = () => {
       const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`;
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute('href', jsonString);
-      downloadAnchor.setAttribute('download', `praxis_dados_lgpd_${user.name ? user.name.replace(/\s+/g, '_') : 'usuario'}.json`);
+      downloadAnchor.setAttribute('download', `praxis_dados_lgpd_${currentUser.name ? currentUser.name.replace(/\s+/g, '_') : 'usuario'}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -79,15 +88,29 @@ export const Header: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-3 border-l border-[#CBD5E1] dark:border-[#334155] pl-4">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold text-[#0F172A] dark:text-[#F8FAFC] leading-none">{displayName}</p>
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-medium mt-0.5">
-              {user.role === 'TenantAdmin' ? 'Administradora & RT' : user.role || 'Nutricionista RT'}
-            </p>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-[#EFF6FF] dark:bg-blue-500/15 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold border border-blue-200 dark:border-blue-500/30">
-            <User className="w-5 h-5" />
-          </div>
+          <button
+            onClick={() => navigate('/profile')}
+            title="Meu Perfil"
+            className="flex items-center gap-3 text-left hover:opacity-85 transition-opacity cursor-pointer"
+          >
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold text-[#0F172A] dark:text-[#F8FAFC] leading-none">{displayName}</p>
+              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-medium mt-0.5">
+                {currentUser.role === 'TenantAdmin' ? 'Administradora & RT' : currentUser.role || 'Nutricionista RT'}
+              </p>
+            </div>
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-[#EFF6FF] dark:bg-blue-500/15 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold border border-blue-200 dark:border-blue-500/30">
+              {currentUser.profilePhotoUrl ? (
+                <img
+                  src={currentUser.profilePhotoUrl}
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-5 h-5" />
+              )}
+            </div>
+          </button>
 
           {/* Logout Button */}
           <button

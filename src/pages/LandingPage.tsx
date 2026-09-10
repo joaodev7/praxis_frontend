@@ -28,11 +28,21 @@ import {
   Mail,
   Compass,
   Check,
-  CreditCard
+  CreditCard,
+  Tag,
+  BookOpen
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { SEO } from '../components/seo/SEO';
+import { StructuredData } from '../components/seo/StructuredData';
+import { SEO_PAGES } from '../seo/metadata';
+import { 
+  getOrganizationSchema, 
+  getSoftwareApplicationSchema, 
+  getWebSiteSchema 
+} from '../seo/structured-data';
 
 export const LandingPage: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -46,6 +56,17 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans selection:bg-blue-500 selection:text-white">
       
+      {/* SEO & GEO Schemas (Sections 7, 20, 21, 22) */}
+      <SEO
+        title={SEO_PAGES.home.title}
+        description={SEO_PAGES.home.description}
+        canonical={SEO_PAGES.home.canonicalPath}
+        keywords={SEO_PAGES.home.keywords}
+      />
+      <StructuredData data={getOrganizationSchema()} id="home-schema-org" />
+      <StructuredData data={getSoftwareApplicationSchema()} id="home-schema-app" />
+      <StructuredData data={getWebSiteSchema()} id="home-schema-website" />
+
       {/* 1. NAVIGATION HEADER */}
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-[#020617]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -67,14 +88,14 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-            <a href="#problema" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">O Desafio</a>
-            <a href="#solucao" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">A Solução</a>
-            <a href="#funcionalidades" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Funcionalidades</a>
-            <a href="#beneficios" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Benefícios</a>
-            <a href="#como-funciona" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Como Funciona</a>
-            <a href="#para-quem" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Para Quem É</a>
-            <a href="#planos" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline transition-all">Planos & Preços</a>
+          <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <Link to="/software-para-nutricionistas/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Nutricionistas</Link>
+            <Link to="/software-para-nutricionista-rt/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Nutricionista RT</Link>
+            <Link to="/software-para-consultoria-de-alimentos/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Consultorias</Link>
+            <Link to="/auditoria-de-seguranca-dos-alimentos/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Auditorias</Link>
+            <Link to="/etiquetagem-de-alimentos/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Etiquetagem</Link>
+            <Link to="/precos/" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline transition-all">Planos</Link>
+            <Link to="/blog/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-bold">Blog</Link>
           </nav>
 
           {/* Actions */}
@@ -117,19 +138,19 @@ export const LandingPage: React.FC = () => {
         </div>
       </header>
 
-      {/* 1. HERO — A PRIMEIRA IMPRESSÃO */}
-      <section className="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-32">
+      {/* 1. HERO — CONFORME SEÇÃO 7 DO DOCUMENTO */}
+      <section className="relative overflow-hidden pt-16 pb-16 lg:pt-20 lg:pb-24">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-blue-500/10 dark:bg-blue-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Título Principal */}
+          {/* H1 Rigorosamente Conforme Documentação Oficial */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-tight">
-            Gestão inteligente para empresas de <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">consultoria nutricional</span>.
+            Gestão completa para <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">nutricionistas</span> e consultorias de alimentos
           </h1>
 
-          {/* Subtítulo */}
+          {/* Subheadline Rigorosamente Conforme Documentação Oficial */}
           <p className="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
-            Centralize clientes, equipes, avaliações e dados da sua operação em uma única plataforma. Tenha mais controle, padronize processos e transforme informações em decisões melhores.
+            O PRAXIS centraliza clientes, unidades, visitas técnicas, auditorias, não conformidades, planos de ação e documentos em uma única plataforma.
           </p>
 
           {/* CTAs */}
@@ -155,6 +176,49 @@ export const LandingPage: React.FC = () => {
           <p className="mt-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
             Feito para empresas que gerenciam múltiplos clientes e precisam crescer sem aumentar a complexidade da operação.
           </p>
+        </div>
+      </section>
+
+      {/* CONTEÚDO CITÁVEL POR IA & GEO (Seção 19 da Especificação Técnica) */}
+      <section className="py-10 bg-blue-50/50 dark:bg-blue-950/20 border-y border-blue-100 dark:border-blue-900/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
+              Visão Direta & Transparente da Plataforma
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1">
+              O que você precisa saber sobre o PRAXIS
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900/40 shadow-sm">
+              <h3 className="font-bold text-sm text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">
+                O que é o PRAXIS?
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                O PRAXIS é um software de gestão para nutricionistas responsáveis técnicos e consultorias de alimentos. A plataforma centraliza clientes, unidades, visitas técnicas, auditorias, não conformidades, planos de ação e documentos.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900/40 shadow-sm">
+              <h3 className="font-bold text-sm text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">
+                Para quem foi desenvolvido?
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                O PRAXIS foi desenvolvido principalmente para nutricionistas responsáveis técnicos, consultorias de alimentos e profissionais que realizam auditorias e acompanham estabelecimentos de alimentação.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900/40 shadow-sm">
+              <h3 className="font-bold text-sm text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">
+                O que é possível gerenciar?
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                O PRAXIS permite gerenciar clientes, unidades, nutricionistas, visitas técnicas, auditorias sanitárias (RDC 216), não conformidades, evidências fotográficas, planos de ação 5W2H, ARTs e controle de etiquetagem de alimentos.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -910,14 +974,21 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Links */}
-            <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-300">
-              <Link to="/login" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Plataforma</Link>
-              <a href="#funcionalidades" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Funcionalidades</a>
-              <a href="#planos" className="text-blue-600 dark:text-blue-400 font-bold hover:underline transition-all">Planos & Preços</a>
-              <a href="#solucao" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Sobre o PRAXIS</a>
-              <button onClick={() => setShowContactModal(true)} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Contato</button>
-              <button onClick={() => setShowPrivacyModal(true)} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Política de Privacidade</button>
-              <button onClick={() => setShowTermsModal(true)} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Termos de Uso</button>
+            <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+              <Link to="/software-para-nutricionistas/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Nutricionistas</Link>
+              <Link to="/software-para-nutricionista-rt/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Nutricionista RT</Link>
+              <Link to="/software-para-consultoria-de-alimentos/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Consultorias</Link>
+              <Link to="/auditoria-de-seguranca-dos-alimentos/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Auditorias</Link>
+              <Link to="/checklist-rdc-216/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Checklist RDC 216</Link>
+              <Link to="/plano-de-acao-5w2h/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">5W2H</Link>
+              <Link to="/etiquetagem-de-alimentos/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Etiquetagem</Link>
+              <Link to="/precos/" className="text-blue-600 dark:text-blue-400 font-bold hover:underline transition-all">Planos</Link>
+              <Link to="/sobre/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Sobre</Link>
+              <Link to="/contato/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contato</Link>
+              <Link to="/seguranca/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Segurança</Link>
+              <Link to="/privacidade/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacidade</Link>
+              <Link to="/termos/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Termos</Link>
+              <Link to="/blog/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-bold text-blue-600 dark:text-blue-400">Blog</Link>
             </div>
           </div>
 

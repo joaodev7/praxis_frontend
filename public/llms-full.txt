@@ -1,55 +1,71 @@
 # PRAXIS — Documentação Completa e Especificações do Sistema
+> https://praxisnutri.com.br
 
 ## Visão Geral
-PRAXIS é uma solução de software como serviço (SaaS) B2B desenvolvida especificamente para resolver o desafio de escala e governança operacional em consultorias e assessorias de nutrição no Brasil.
+PRAXIS é uma solução de software como serviço (SaaS) B2B desenvolvida especificamente para resolver o desafio de escala e governança operacional em consultorias de alimentos e na rotina de nutricionistas Responsáveis Técnicos (RTs) no Brasil.
 
-A plataforma unifica em uma única interface em nuvem o controle de contratos, o acompanhamento regulatório de Anotações de Responsabilidade Técnica (ARTs) perante os Conselhos Regionais de Nutricionistas (CRNs), a execução de auditorias sanitárias com base na RDC ANVISA nº 216/2004 e a emissão automatizada de laudos técnicos em PDF.
+A plataforma unifica em uma única interface em nuvem o controle de contratos, o acompanhamento regulatório de Anotações de Responsabilidade Técnica (ARTs) perante os Conselhos Regionais de Nutricionistas (CRNs), a execução de auditorias sanitárias com base na RDC ANVISA nº 216/2004, o plano corretivo 5W2H, a etiquetagem térmica com rastreabilidade por QR Code e a emissão automatizada de laudos técnicos em PDF.
 
-## Problema que a PRAXIS Resolve
-Consultorias nutricionais tradicionais operam através de planilhas dispersas, grupos de mensagens, fotos desorganizadas em celulares e relatórios manuais em editores de texto. Conforme a carteira de clientes cresce, essa fragmentação gera riscos de prazos de ARTs expirados, relatórios atrasados, retrabalho e vulnerabilidade perante fiscalizações sanitárias.
+## Problema que o PRAXIS Resolve
+Consultorias nutricionais tradicionais operam através de planilhas dispersas, grupos de mensagens, fotos desorganizadas em celulares e relatórios manuais em editores de texto. Conforme a carteira de clientes cresce, essa fragmentação gera riscos de prazos de ARTs expirados, relatórios atrasados, autuações sanitárias e vulnerabilidade jurídica do profissional.
 
-O PRAXIS elimina essa complexidade ao padronizar o fluxo operacional: do cadastro do cliente até a visita em campo e o relatório final.
+O PRAXIS elimina essa complexidade ao padronizar o fluxo operacional: do cadastro do cliente até a visita em campo, a resolução de não conformidades e o controle de shelf-life dos insumos.
 
 ## Módulos do Sistema
 
 ### 1. Gestão de Clientes e Unidades Operacionais
 - Cadastro detalhado de empresas clientes (CNPJ, Razão Social, Nome Fantasia, Responsável Legal, Endereço e Contato).
-- Suporte a clientes multi-unidade (filiais, cozinhas industriais, quiosques, franquias de alimentação).
+- Suporte a clientes multi-unidade (redes de restaurantes, cozinhas industriais, franquias, buffets e hospitais).
 - Histórico completo de vistorias, laudos anteriores e não conformidades pendentes.
 
 ### 2. Controle de ARTs (Anotações de Responsabilidade Técnica)
 - Registro estruturado do número da ART emitida perante o CRN competente.
 - Associação com a Unidade Atendida e com a Nutricionista RT responsável.
-- Gestão de prazos de vigência, status de renovação e alertas de vencimento preventivo.
+- Gestão de prazos de vigência, status de renovação e alertas de vencimento preventivo (30 e 15 dias).
 
 ### 3. Checklists Sanitários e Boas Práticas (RDC 216/2004)
-- Questionários estruturados com categorias obrigatórias de higiene: Higiene Pessoal, Armazenamento, Instalações & Equipamentos, Manipulação e Controle de Pragas.
-- Avaliação de conformidade (Conforme, Não Conforme, Não se Aplica) por item.
-- Registro detalhado de observações e prazos de correção.
+- Questionários estruturados com categorias obrigatórias: Instalações & Equipamentos, Higienização, Controle de Pragas, Manipuladores, Matérias-Primas e Documentação.
+- Avaliação objetiva (Conforme, Não Conforme, Não se Aplica) por item.
+- Cálculo percentual automático de conformidade geral e por setor.
 
 ### 4. Fotos e Evidências Visuais
-- Upload de imagens e fotos tiradas no momento da inspeção.
-- Associação direta de cada evidência à Não Conformidade e à Visita Técnica correspondente.
+- Captura de fotos no momento da inspeção diretamente pelo aplicativo.
+- Associação imediata de cada evidência à Não Conformidade correspondente.
 
-### 5. Laudos e Relatórios Executivos em PDF
-- Geração instantânea de relatórios técnicos em PDF com design profissional, dados da RT, assinatura, status de conformidade e fotos anexadas.
-- Pronto para entrega aos diretores dos estabelecimentos e apresentação aos fiscais sanitários.
+### 5. Planos de Ação 5W2H
+- Metodologia 5W2H vinculada a cada desvio identificado: O quê, Por quê, Onde, Quando, Quem, Como e Quanto.
+- Quadro kanban de acompanhamento de eficácia das correções entre visitas.
 
-### 6. App Mobile em Campo
-- Interface otimizada para smartphones e tablets para nutricionistas preencherem checklists e fotografarem evidências diretamente na cozinha/estoque.
+### 6. Sistema de Etiquetagem Térmica e Controle de Validade
+- Geração de etiquetas em padrão térmico 80x50 mm, 50x30 mm e folhas A4 com grade via QuestPDF.
+- Cálculo automático de prazo de validade (shelf-life) em horas, dias, semanas ou meses segundo hierarquia regulatória de regras técnicas.
+- Teto compulsório limitador na validade original do fabricante.
+- Token criptográfico único e QR Code público para verificação imediata de autenticidade por smartphones.
+- Registro auditável de descartes (peso, quantidade e motivo) e reimpressões com justificativa.
+
+### 7. Laudos e Relatórios Executivos em PDF
+- Geração instantânea de relatórios técnicos em PDF com design profissional, dados da RT, assinatura digital e fotos anexadas.
 
 ## Arquitetura de Segurança e Privacidade (LGPD)
-- **Multi-tenancy:** Isolamento lógico e criptográfico por empresa via Entity Framework Core Global Query Filters.
-- **Criptografia:** Senhas com hash BCrypt e comunicação com tokens JWT e HTTPS.
-- **Trilha de Auditoria (AuditLogs):** Registro de logins, cadastros, alterações e exclusões com autor e data em UTC.
-- **Portabilidade de Dados (Art. 18, V da LGPD):** Exportação completa dos dados pessoais e registros em formato JSON.
-- **Proteção contra Ataques:** Rate Limiting nativo do .NET 8 e cabeçalhos de segurança HTTP (X-Content-Type-Options, X-Frame-Options, etc.).
+- Multi-tenancy com isolamento rigoroso por TenantId.
+- Criptografia TLS 1.3 em trânsito e AES-256 em repouso.
+- Trilha de Auditoria (AuditLogs) com registro de ações dos usuários.
+- Conformidade integral com o Artigo 18 da Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
 
-## Referências Regulatórias
-- ANVISA RDC nº 216/2004 — Regulamento Técnico de Boas Práticas para Serviços de Alimentação.
-- CFN Resolução nº 600/2018 — Áreas de atuação do nutricionista e responsabilidade técnica.
-- Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
-
-## Informações de Contato
-- Website: https://praxisnutri.com.br
-- Login e Cadastro: https://praxisnutri.com.br/login
+## Estrutura de URLs Oficiais
+- https://praxisnutri.com.br/ (Página Inicial)
+- https://praxisnutri.com.br/software-para-nutricionistas/ (Software para Nutricionistas)
+- https://praxisnutri.com.br/software-para-nutricionista-rt/ (Software para Nutricionista RT)
+- https://praxisnutri.com.br/software-para-consultoria-de-alimentos/ (Software para Consultorias)
+- https://praxisnutri.com.br/gestao-de-consultoria-de-alimentos/ (Gestão de Consultoria)
+- https://praxisnutri.com.br/auditoria-de-seguranca-dos-alimentos/ (Auditoria Sanitária)
+- https://praxisnutri.com.br/checklist-rdc-216/ (Checklist RDC 216 Digital)
+- https://praxisnutri.com.br/plano-de-acao-5w2h/ (Plano de Ação 5W2H)
+- https://praxisnutri.com.br/etiquetagem-de-alimentos/ (Etiquetagem & Validade)
+- https://praxisnutri.com.br/precos/ (Planos e Preços)
+- https://praxisnutri.com.br/sobre/ (Sobre o PRAXIS)
+- https://praxisnutri.com.br/contato/ (Contato e Suporte)
+- https://praxisnutri.com.br/seguranca/ (Segurança e LGPD)
+- https://praxisnutri.com.br/privacidade/ (Política de Privacidade)
+- https://praxisnutri.com.br/termos/ (Termos de Uso)
+- https://praxisnutri.com.br/blog/ (Blog Técnico e Regulatório)

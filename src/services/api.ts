@@ -1,7 +1,42 @@
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-const baseURL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
+/**
+ * Resolve a URL base da API garantindo que o frontend utilize sempre o subdomínio api.*
+ * e nunca chame a si próprio (sandbox.praxisnutri.com.br/api).
+ */
+function resolveApiBaseUrl(): string {
+  let envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
+
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+
+    // Detectar ambiente de Sandbox / Preview Cloudflare Pages pelo hostname
+    if (hostname === 'sandbox.praxisnutri.com.br' || hostname.endsWith('.sandbox.praxisnutri.com.br')) {
+      return 'https://api.sandbox.praxisnutri.com.br/api';
+    }
+
+    // Detectar ambiente de Produção pelo hostname
+    if (hostname === 'praxisnutri.com.br' || hostname === 'www.praxisnutri.com.br') {
+      return 'https://api.praxisnutri.com.br/api';
+    }
+
+    // Ambiente de desenvolvimento local (se envUrl não configurado)
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && !envUrl) {
+      return 'http://localhost:5000/api';
+    }
+
+    // Se a variável foi erroneamente configurada com a URL do frontend sem o prefixo 'api.'
+    if (envUrl && envUrl.includes('//sandbox.praxisnutri.com.br') && !envUrl.includes('api.sandbox')) {
+      envUrl = envUrl.replace('//sandbox.praxisnutri.com.br', '//api.sandbox.praxisnutri.com.br');
+    }
+  }
+
+  const rawUrl = envUrl || 'https://api.praxisnutri.com.br';
+  const cleanUrl = rawUrl.trim().replace(/\/+$/, '');
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+}
+
+const baseURL = resolveApiBaseUrl();
 
 const api = axios.create({
   baseURL,

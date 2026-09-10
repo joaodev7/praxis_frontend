@@ -1,27 +1,38 @@
-# PRAXIS — Gestão Inteligente para Consultorias Nutricionais
+# PRAXIS — Software para Nutricionistas e Consultorias de Alimentos
+> https://praxisnutri.com.br
 
-> PRAXIS é uma plataforma SaaS B2B moderna de inteligência operacional e gestão para empresas de consultoria nutricional, assessoria em alimentação e nutricionistas Responsáveis Técnicos (RTs).
+> O PRAXIS é um software de gestão para nutricionistas responsáveis técnicos e consultorias de alimentos. A plataforma centraliza clientes, unidades, visitas técnicas, auditorias, não conformidades, planos de ação, documentos e controle de etiquetagem e validade de alimentos.
 
 ## O que é o PRAXIS?
-O PRAXIS centraliza clientes, unidades, equipes de nutricionistas, Anotações de Responsabilidade Técnica (ARTs perante o CRN), checklists sanitários de Boas Práticas (RDC ANVISA 216/2004 e RDC 275), registro fotográfico de evidências e geração de laudos técnicos em PDF.
+O PRAXIS centraliza clientes, unidades, visitas técnicas, auditorias sanitárias, não conformidades, planos de ação 5W2H, Anotações de Responsabilidade Técnica (ARTs perante o CRN), checklists de Boas Práticas (RDC ANVISA 216/2004) e sistema térmico de etiquetagem e shelf-life de alimentos com QR Code de verificação pública.
 
-## Principais Funcionalidades
-- **Gestão de Clientes e Unidades:** Cadastro e histórico centralizado de restaurantes, buffets, hospitais, cozinhas industriais e UANs atendidas.
-- **Controle de ARTs:** Monitoramento de vigência, emissões e renovações de Anotações de Responsabilidade Técnica junto ao Conselho Regional de Nutricionistas (CRN).
-- **Checklists Sanitários em Campo (RDC 216/2004):** Auditorias higiênico-sanitárias com registro de não conformidades e plano de ação imediato.
-- **Fotos e Evidências:** Anexação de fotos comprobatórias vinculadas a não conformidades e visitas técnicas.
-- **Relatórios Técnicos e Indicadores:** Geração automatizada de laudos periciais e relatórios em PDF com visual executivo.
-- **App Mobile Dedicado:** Execução ágil de visitas técnicas em cozinhas e áreas de manipulação.
-- **Conformidade com a LGPD (Lei nº 13.709/2018):** Criptografia de ponta a ponta, isolamento multi-tenant seguro e portabilidade de dados (Art. 18).
+## Para quem o PRAXIS foi desenvolvido?
+O PRAXIS foi desenvolvido principalmente para:
+- Nutricionistas Responsáveis Técnicos (RTs);
+- Empresas de consultoria e assessoria de alimentos;
+- Profissionais que realizam auditorias higiênico-sanitárias;
+- Gestores de restaurantes, cozinhas industriais, padarias, buffets, hospitais e UANs.
 
-## Para Quem É?
-- Empresas de consultoria e assessoria nutricional que gerenciam múltiplos clientes.
-- Nutricionistas Responsáveis Técnicos (RTs) autônomos.
-- Redes de restaurantes, hotéis e serviços de alimentação e bebidas.
-- Cozinhas industriais e Unidades de Alimentação e Nutrição (UANs).
+## O que é possível gerenciar no PRAXIS?
+1. **Clientes e Múltiplas Unidades:** Histórico unificado e contratos de serviços de alimentação.
+2. **Nutricionistas RT e ARTs:** Monitoramento de vigência de ARTs perante o Conselho Regional de Nutricionistas (CRN).
+3. **Visitas Técnicas:** Roteiros em campo, horários de entrada/saída e colheita de assinatura digital na cozinha.
+4. **Auditorias Sanitárias (RDC 216/2004):** Checklists digitais em campo com cálculo de conformidade por setor.
+5. **Não Conformidades e Evidências:** Registro fotográfico imediato dos desvios sanitários.
+6. **Planos de Ação 5W2H:** Atribuição formal de O quê, Por quê, Onde, Quando, Quem, Como e Quanto para cada correção.
+7. **Sistema de Etiquetagem & Validade:** Impressão térmica 80x50 mm e 50x30 mm com cálculo automático de validade e QR Code de auditoria pública.
+8. **Laudos Executivos em PDF:** Documentos gerados automaticamente com visual executivo e marca da consultoria.
 
-## Links Oficiais
-- [Página Principal](https://praxisnutri.com.br/)
-- [Acesso à Plataforma / Login](https://praxisnutri.com.br/login)
-- [Cadastro de Consultoria](https://praxisnutri.com.br/login?register=true)
-- [Documentação Completa para LLMs](https://praxisnutri.com.br/llms-full.txt)
+## Principais URLs Oficiais
+- Página Inicial: https://praxisnutri.com.br/
+- Software para Nutricionistas: https://praxisnutri.com.br/software-para-nutricionistas/
+- Software para Nutricionista RT: https://praxisnutri.com.br/software-para-nutricionista-rt/
+- Software para Consultoria de Alimentos: https://praxisnutri.com.br/software-para-consultoria-de-alimentos/
+- Gestão de Consultoria de Alimentos: https://praxisnutri.com.br/gestao-de-consultoria-de-alimentos/
+- Auditoria de Segurança dos Alimentos: https://praxisnutri.com.br/auditoria-de-seguranca-dos-alimentos/
+- Checklist RDC 216: https://praxisnutri.com.br/checklist-rdc-216/
+- Plano de Ação 5W2H: https://praxisnutri.com.br/plano-de-acao-5w2h/
+- Etiquetagem e Validade: https://praxisnutri.com.br/etiquetagem-de-alimentos/
+- Planos e Preços: https://praxisnutri.com.br/precos/
+- Blog Técnico: https://praxisnutri.com.br/blog/
+- Documentação Completa para LLMs: https://praxisnutri.com.br/llms-full.txt
