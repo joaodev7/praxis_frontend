@@ -1,7 +1,8 @@
 import React from 'react';
+import { cn } from '../../utils/cn';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'white';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   icon?: React.ReactNode;
@@ -31,11 +32,12 @@ export const Button: React.FC<ButtonProps> = ({
     ghost: 'bg-transparent hover:bg-slate-100 dark:hover:bg-[#1E293B] text-[#334155] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] focus:ring-slate-300 dark:focus:ring-slate-700',
     danger: 'bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-subtle focus:ring-[#DC2626]/40',
     outline: 'bg-transparent border border-[#2563EB] dark:border-[#3B82F6] text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#EFF6FF] dark:hover:bg-blue-950/30 focus:ring-[#2563EB]/40',
+    white: 'bg-white hover:bg-blue-50 text-blue-900 shadow-subtle focus:ring-white/40',
   };
 
   return (
     <button
-      className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
+      className={cn(baseStyles, sizeStyles[size], variantStyles[variant], className)}
       disabled={disabled || loading}
       {...props}
     >

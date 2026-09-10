@@ -210,7 +210,7 @@ export const SoftwareNutricionistasPage: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/login?register=true">
-              <Button size="lg" className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 font-bold px-8">
+              <Button size="lg" variant="white" className="w-full sm:w-auto font-bold px-8 text-blue-600">
                 Começar Teste Grátis Agora
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
