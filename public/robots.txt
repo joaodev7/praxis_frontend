@@ -1,17 +1,34 @@
 # ==========================================================
 # PRAXIS — robots.txt
 # https://praxisnutri.com.br
+# Diretrizes oficiais de rastreamento para buscadores e IA
 # ==========================================================
 
 User-agent: *
 Allow: /
-Allow: /login
+Allow: /software-para-nutricionistas/
+Allow: /software-para-nutricionista-rt/
+Allow: /software-para-consultoria-de-alimentos/
+Allow: /gestao-de-consultoria-de-alimentos/
+Allow: /auditoria-de-seguranca-dos-alimentos/
+Allow: /checklist-rdc-216/
+Allow: /plano-de-acao-5w2h/
+Allow: /etiquetagem-de-alimentos/
+Allow: /precos/
+Allow: /sobre/
+Allow: /contato/
+Allow: /seguranca/
+Allow: /privacidade/
+Allow: /termos/
+Allow: /blog/
+Allow: /public/labels/
+Allow: /l/
 Allow: /assets/
 Allow: /llms.txt
 Allow: /llms-full.txt
 Allow: /sitemap.xml
 
-# Proteger rotas privadas autenticadas da indexacao publica
+# Áreas privadas autenticadas (proibidas para indexação)
 Disallow: /dashboard
 Disallow: /clients
 Disallow: /nutritionists
@@ -19,8 +36,15 @@ Disallow: /arts
 Disallow: /visits
 Disallow: /non-conformities
 Disallow: /checklists
+Disallow: /etiquetagem/nova
+Disallow: /etiquetagem/regras
+Disallow: /billing
+Disallow: /profile
+Disallow: /api/
 
-# AI Crawlers & LLM Agents (Permitir descoberta e busca semantica)
+# ==========================================================
+# AI Crawlers & LLM Agents (Permitir descoberta e busca semântica)
+# ==========================================================
 User-agent: GPTBot
 Allow: /
 Allow: /llms.txt
@@ -52,5 +76,5 @@ Allow: /
 User-agent: anthropic-ai
 Allow: /
 
-# Sitemap
+# Sitemap oficial
 Sitemap: https://praxisnutri.com.br/sitemap.xml
