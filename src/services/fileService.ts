@@ -83,12 +83,12 @@ export async function requestUploadUrl(request: UploadFileRequest): Promise<Uplo
 }
 
 /**
- * 2. Realiza o upload binário direto do navegador para o Cloudflare R2 via XMLHttpRequest
+ * 2. Realiza o upload binário direto do navegador para o armazenamento seguro em nuvem via XMLHttpRequest
  * para permitir acompanhamento de progresso de 0% a 100% e suporte a cancelamento.
  *
  * IMPORTANTE: O arquivo NÃO passa pelo backend e nenhuma credencial é utilizada.
  */
-export function uploadToR2(
+export function uploadToStorage(
   uploadUrl: string,
   file: File,
   onProgress?: (progress: number) => void,
@@ -118,14 +118,14 @@ export function uploadToR2(
       } else {
         reject(
           new Error(
-            `Falha no envio direto ao Cloudflare R2 (HTTP ${xhr.status}). A URL pode ter expirado. Tente novamente.`
+            `Falha no envio direto do arquivo (HTTP ${xhr.status}). A URL pode ter expirado. Tente novamente.`
           )
         );
       }
     };
 
     xhr.onerror = () => {
-      reject(new Error('Erro de conexão durante o upload para o Cloudflare R2. Verifique sua conexão com a internet.'));
+      reject(new Error('Erro de conexão durante o upload do arquivo. Verifique sua conexão com a internet.'));
     };
 
     xhr.ontimeout = () => {
@@ -140,8 +140,8 @@ export function uploadToR2(
 }
 
 /**
- * 3. Notifica o backend que o upload direto no R2 foi concluído com sucesso.
- * O backend verifica a existência do arquivo no bucket e altera o status para Uploaded.
+ * 3. Notifica o backend que o upload direto foi concluído com sucesso.
+ * O backend verifica a existência do arquivo no armazenamento e altera o status para Uploaded.
  */
 export async function completeUpload(fileId: string): Promise<CompleteUploadResponse> {
   try {
@@ -177,7 +177,7 @@ export async function getDownloadUrl(fileId: string): Promise<DownloadUrlRespons
 }
 
 /**
- * 5. Exclui o arquivo no Cloudflare R2 e aplica soft delete no banco de dados.
+ * 5. Exclui o arquivo no armazenamento em nuvem e aplica soft delete no banco de dados.
  */
 export async function deleteFile(fileId: string): Promise<void> {
   try {
@@ -209,7 +209,7 @@ export async function listClientFiles(clientId: string): Promise<StoredFileDto[]
 
 /**
  * Fluxo completo de upload direto orquestrado:
- * Validação -> Solicitação de URL pré-assinada -> Upload direto para R2 -> Confirmação
+ * Validação -> Solicitação de URL pré-assinada -> Upload direto para Storage -> Confirmação
  */
 export async function uploadFileWorkflow(
   file: File,
@@ -240,9 +240,9 @@ export async function uploadFileWorkflow(
     clientId,
   });
 
-  // 2. Upload direto para o Cloudflare R2
+  // 2. Upload direto para o armazenamento em nuvem
   onStateChange?.('uploading');
-  await uploadToR2(uploadInfo.uploadUrl, file, onProgress, abortSignal);
+  await uploadToStorage(uploadInfo.uploadUrl, file, onProgress, abortSignal);
 
   // 3. Confirmar no backend
   onStateChange?.('completing');

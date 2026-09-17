@@ -10,7 +10,7 @@ function resolveApiBaseUrl(): string {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
 
-    // Detectar ambiente de Sandbox / Preview Cloudflare Pages pelo hostname
+    // Detectar ambiente de Sandbox / Preview pelo hostname
     if (hostname === 'sandbox.praxisnutri.com.br' || hostname.endsWith('.sandbox.praxisnutri.com.br')) {
       return 'https://api.sandbox.praxisnutri.com.br/api';
     }
