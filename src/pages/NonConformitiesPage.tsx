@@ -384,7 +384,7 @@ export const NonConformitiesPage: React.FC = () => {
             Não Conformidades & Planos de Ação (5W2H)
           </h2>
           <p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
-            Rastreabilidade completa: Auditoria → Desvio → Ação 5W2H → Execução → Evidências (R2) → Validação.
+            Rastreabilidade completa: Auditoria → Desvio → Ação 5W2H → Execução → Evidências → Validação.
           </p>
         </div>
 
@@ -780,7 +780,7 @@ export const NonConformitiesPage: React.FC = () => {
                         <div>
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-bold text-xs uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] flex items-center gap-1.5">
-                              <Camera className="w-3.5 h-3.5 text-blue-500" /> Evidências Fotográficas de Correção (Cloudflare R2)
+                              <Camera className="w-3.5 h-3.5 text-blue-500" /> Evidências Fotográficas de Correção
                             </h4>
                             {plan.status !== 'Concluida' && plan.status !== 'Cancelada' && (
                               <Button
@@ -1104,11 +1104,11 @@ export const NonConformitiesPage: React.FC = () => {
         </form>
       </Modal>
 
-      {/* Modal: Anexar Evidência (Cloudflare R2) */}
+      {/* Modal: Anexar Evidência */}
       <Modal
         isOpen={evidenceModalOpen}
         onClose={() => setEvidenceModalOpen(false)}
-        title="Anexar Evidência da Correção (Cloudflare R2)"
+        title="Anexar Evidência da Correção"
         subtitle="Envie uma foto ou comprovante que ateste a execução do plano de ação."
         maxWidth="md"
       >

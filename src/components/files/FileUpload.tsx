@@ -151,7 +151,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       case 'requesting-url':
         return 'Preparando upload seguro...';
       case 'uploading':
-        return `Enviando para o R2... ${progress}%`;
+        return `Enviando arquivo... ${progress}%`;
       case 'completing':
         return 'Finalizando e confirmando upload...';
       case 'completed':

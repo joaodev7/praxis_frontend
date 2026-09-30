@@ -118,7 +118,7 @@ export const ClientsPage: React.FC = () => {
   };
 
   const handleDeleteFile = async (fileId: string) => {
-    if (!confirm('Deseja realmente excluir este arquivo do Cloudflare R2?')) return;
+    if (!confirm('Deseja realmente excluir este arquivo?')) return;
     try {
       await deleteFile(fileId);
       if (selectedClient) {
@@ -924,13 +924,13 @@ export const ClientsPage: React.FC = () => {
       </Modal>
 
       {/* ======================================================== */}
-      {/* MODAL ARQUIVOS & FOTOS (CLOUDFLARE R2)                   */}
+      {/* MODAL ARQUIVOS & FOTOS                                   */}
       {/* ======================================================== */}
       <Modal
         isOpen={showFilesModal && !!selectedClient}
         onClose={() => setShowFilesModal(false)}
         title={`Arquivos & Fotos — ${selectedClient?.tradeName}`}
-        subtitle="Armazenamento seguro de fotos de vistorias, laudos e documentos via Cloudflare R2"
+        subtitle="Armazenamento seguro de fotos de vistorias, laudos e documentos"
       >
         <div className="space-y-6">
           {selectedClient && (
@@ -999,7 +999,7 @@ export const ClientsPage: React.FC = () => {
                         type="button"
                         onClick={() => handleDeleteFile(file.id)}
                         className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded transition shrink-0"
-                        title="Excluir arquivo do Cloudflare R2"
+                        title="Excluir arquivo"
                         aria-label="Excluir arquivo"
                       >
                         <Trash2 className="w-4 h-4" />

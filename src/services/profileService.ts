@@ -28,4 +28,9 @@ export const profileService = {
   async deletePhoto(): Promise<void> {
     await api.delete('/profile/photo');
   },
+
+  async exportUserData(): Promise<any> {
+    const { data } = await api.get('/auth/export-data');
+    return data;
+  },
 };
