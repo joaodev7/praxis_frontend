@@ -4,6 +4,7 @@ import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ClientsPage } from './pages/ClientsPage';
 import { NutritionistsPage } from './pages/NutritionistsPage';
@@ -66,6 +67,7 @@ export const App: React.FC = () => {
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/home" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
 
           {/* Public SEO & GEO Landing Pages (Section 6) */}
           <Route path="/software-para-nutricionistas" element={<SoftwareNutricionistasPage />} />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
-import { Lock, Mail, Building2, LogIn, ArrowRight, ShieldCheck, FileText } from 'lucide-react';
+import { Lock, Mail, Building2, LogIn, ArrowRight, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
@@ -17,10 +17,37 @@ export const LoginPage: React.FC = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState('');
+  const [forgotSuccess, setForgotSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+
+  const openForgotModal = () => {
+    setForgotEmail(email);
+    setForgotError('');
+    setForgotSuccess(false);
+    setShowForgotModal(true);
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError('');
+    setForgotLoading(true);
+
+    try {
+      await api.post('/auth/forgot-password', { email: forgotEmail });
+      setForgotSuccess(true);
+    } catch (err: any) {
+      setForgotError(err.response?.data?.message || 'Falha ao solicitar redefinição. Tente novamente.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,7 +166,18 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#94A3B8] uppercase mb-1">Senha de Acesso</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-[#94A3B8] uppercase">Senha de Acesso</label>
+              {!isRegister && (
+                <button
+                  type="button"
+                  onClick={openForgotModal}
+                  className="text-xs text-[#60A5FA] hover:text-[#93C5FD] transition-colors cursor-pointer"
+                >
+                  Esqueceu sua senha?
+                </button>
+              )}
+            </div>
             <input
               type="password"
               required
@@ -283,6 +321,84 @@ export const LoginPage: React.FC = () => {
             no painel do sistema ou contatando o encarregado de dados (DPO) através dos canais de suporte.
           </p>
         </div>
+      </Modal>
+
+      {/* Modal Recuperação de Senha */}
+      <Modal
+        isOpen={showForgotModal}
+        onClose={() => setShowForgotModal(false)}
+        title="Recuperação de Senha"
+        subtitle="Enviaremos um link seguro para o seu e-mail"
+        maxWidth="sm"
+      >
+        {forgotSuccess ? (
+          <div className="space-y-4 text-center py-2">
+            <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-slate-800 dark:text-white">Solicitação enviada!</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                Se o e-mail informado estiver cadastrado em nossa base, você receberá as instruções para redefinir sua senha em instantes.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="primary"
+              size="md"
+              className="w-full mt-2"
+              onClick={() => setShowForgotModal(false)}
+            >
+              Entendi
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleForgotPassword} className="space-y-4 pt-1">
+            {forgotError && (
+              <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 dark:text-rose-300 text-xs rounded-sm">
+                {forgotError}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-[#94A3B8] uppercase mb-1">
+                E-mail Corporativo
+              </label>
+              <input
+                type="email"
+                required
+                autoFocus
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                placeholder="seu.email@empresa.com"
+                className="w-full bg-slate-50 dark:bg-[#1E293B] border border-slate-300 dark:border-[#334155] text-slate-900 dark:text-white rounded-sm px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2563EB]"
+              />
+              <p className="text-[11px] text-slate-500 dark:text-[#64748B] mt-1">
+                Você receberá uma mensagem com o link para definir uma nova senha.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="md"
+                onClick={() => setShowForgotModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                loading={forgotLoading}
+                icon={<Mail className="w-4 h-4" />}
+              >
+                Enviar link
+              </Button>
+            </div>
+          </form>
+        )}
       </Modal>
     </div>
   );
