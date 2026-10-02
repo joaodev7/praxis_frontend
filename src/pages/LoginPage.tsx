@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
-import { Lock, Mail, Building2, LogIn, ArrowRight, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, Building2, LogIn, ArrowRight, ShieldCheck, FileText, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
@@ -11,6 +11,7 @@ export const LoginPage: React.FC = () => {
   const [isRegister, setIsRegister] = useState(searchParams.get('register') === 'true');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [tenantName, setTenantName] = useState('');
   const [cnpj, setCnpj] = useState('');
   const [adminName, setAdminName] = useState('');
@@ -178,14 +179,24 @@ export const LoginPage: React.FC = () => {
                 </button>
               )}
             </div>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full bg-[#1E293B] border border-[#334155] text-white rounded-sm px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2563EB]"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-[#1E293B] border border-[#334155] text-white rounded-sm px-3.5 py-2.5 pr-10 text-sm focus:outline-none focus:border-[#2563EB]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                title={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           {isRegister && (
